@@ -1,0 +1,21 @@
+diff --git a/node_modules/react-native-floating-label-input/src/index.tsx b/node_modules/react-native-floating-label-input/src/index.tsx
+index 46c1685..7c1cb72 100644
+--- a/node_modules/react-native-floating-label-input/src/index.tsx
++++ b/node_modules/react-native-floating-label-input/src/index.tsx
+@@ -332,14 +332,14 @@ const FloatingLabelInput: React.ForwardRefRenderFunction<InputRef, Props> = (
+         onTogglePassword(!secureText);
+       }
+       setSecureText(!secureText);
+-      secureText ? setFocus() : setBlur();
++      // secureText ? setFocus() : setBlur();
+     } else {
+       if (!((secureText && !toggle) || (!secureText && toggle))) {
+         if (onTogglePassword) {
+           onTogglePassword(!toggle);
+         }
+         setSecureText(!toggle);
+-        toggle ? setFocus() : setBlur();
++        // toggle ? setFocus() : setBlur();
+       }
+     }
+   }

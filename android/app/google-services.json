@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "985455503666",
+    "project_id": "invitem-44f68",
+    "storage_bucket": "invitem-44f68.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985455503666:android:616bbdbce18eb3f90fcf2b",
+        "android_client_info": {
+          "package_name": "com.invitem"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1KD0JwE11c4_S5a-CIcTFSSI5o5Sl0PM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

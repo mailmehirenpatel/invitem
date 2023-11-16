@@ -1,0 +1,93 @@
+# Node.js with React
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+  branches:
+    include:
+      - develop
+
+pool:
+  # vmImage: 'macos-latest'
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # system.debug: true
+   group: Mobile # change it to the name you have set
+
+
+steps:
+- task: NodeTool@0
+  displayName: 'Install Node'
+  inputs:
+    versionSource: 'spec'
+    versionSpec: '20.x'
+
+# - task: JavaToolInstaller@0
+#   inputs:
+#     versionSpec: '11'
+#     jdkArchitectureOption: 'x64'
+#     jdkSourceOption: 'PreInstalled'
+
+  env:
+    NODE_OPTIONS: --max_old_space_size=16384
+
+# - task: DownloadSecureFile@1
+#   inputs:
+#     secureFile: 'invitemKeystore.keystore'
+
+- script: |
+      rm -rf node_modules
+      rm -rf yarn.lock
+      yarn cache clean
+      cd android/
+      chmod +x ./gradlew
+      cd ..
+      yarn install
+  workingDirectory: $(System.DefaultWorkingDirectory)
+  displayName: Install Dependencies
+
+- script: |
+    export NODE_OPTIONS="--max-old-space-size=16384"
+      yarn release-build-android
+      # cd android/
+    # workingDirectory: $(System.DefaultWorkingDirectory)/
+    # displayName: Generate_APKs
+
+- task: AndroidSigning@3
+  displayName: Sign_APKs
+  inputs:
+    apkFiles: "$(Build.SourcesDirectory)/android/app/build/outputs/apk/release/*.apk"
+    apksign: true
+    apksignerKeystoreFile: 'invitemKeystore.keystore'
+    apksignerKeystorePassword: 'Invitem@123'
+    # apksignerKeystorePassword: $(AndroidKeyStorePassword)
+    apksignerKeystoreAlias: 'invitemAlias'
+    # apksignerKeystoreAlias: $(AndroidKeyAlias)
+    apksignerKeyPassword: 'Invitem@123'
+    # apksignerKeyPassword: $(AndroidKeyAliasPassword)
+    zipalign: true
+
+
+# - script: |
+#     rm -rf *.unaligned *.idsig
+#     workingDirectory: "$(Build.SourcesDirectory)/android/app/build/outputs/apk/release"
+#     displayName: CleanUp_Unaligned_Idsig
+
+
+- task: PublishBuildArtifacts@1
+  displayName: "Publish APK Artifacts"
+  inputs:
+      PathtoPublish: "$(System.DefaultWorkingDirectory)/android/app/build/outputs/apk/release"
+      ArtifactName: "APKs"
+      publishLocation: "Container"
+      
+
+- task: CmdLine@2
+  displayName: "Upload to Diawi"
+  inputs:
+    script: |
+      echo Diwai Upload
+      curl https://upload.diawi.com/ -F token='oiZFRU3U2dw1MezahuIMIdezHAaAEKYXjXPhfZjyBr' -F file=@$(System.DefaultWorkingDirectory)/android/app/build/outputs/apk/release/app-release.apk -F callback_emails='varshid.shekhat@mobmaxime.com,hiren@mobmaxime.com,hetal@mobmaxime.com'
+      echo Upload Succesfully

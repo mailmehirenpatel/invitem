@@ -1,0 +1,220 @@
+// 3rd Party Imports
+import {StyleSheet} from 'react-native';
+
+// LOCAL IMPORTS
+import fonts from '../../config/fonts';
+import {
+  Metrics,
+  moderateScale,
+  scale,
+  verticalScale,
+} from '../../config/metrics';
+import Colors from '../../theme/Colors';
+
+export default StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: Colors.White,
+  },
+  contentContainer: {
+    flex: 1,
+    backgroundColor: Colors.LightBlueBackground,
+  },
+  rightIcon: {
+    height: verticalScale(50),
+    width: scale(50),
+    resizeMode: 'contain',
+  },
+  searchContainerStyle: {
+    alignItems: 'center',
+    marginHorizontal: scale(20),
+    marginVertical: verticalScale(10),
+    height: Metrics.screenHeight * 0.05,
+    borderColor: Colors.AuthFiledBorder,
+    borderWidth: 0.5,
+  },
+  searchIcon: {
+    height: verticalScale(18),
+    width: scale(18),
+    resizeMode: 'contain',
+    marginHorizontal: scale(15),
+  },
+  textInput: {
+    width: Metrics.screenWidth * 0.6,
+    color: Colors.Black,
+    fontSize: fonts.size.s15,
+    fontFamily: fonts.type.RobotoSerifRegular,
+    fontWeight: fonts.weight.w400,
+  },
+  eventImage: {
+    height: moderateScale(Metrics.screenHeight * 0.11),
+    width: '100%',
+    resizeMode: 'cover',
+    alignSelf: 'center',
+    borderRadius: 5,
+    position: 'relative',
+  },
+  gridContainer: {
+    marginHorizontal: scale(15),
+  },
+  listDetailView: {
+    backgroundColor: Colors.White,
+    borderRadius: 10,
+    justifyContent: 'space-between',
+    padding: moderateScale(5),
+    elevation: 2,
+    position: 'relative',
+  },
+  eventText: {
+    fontFamily: fonts.type.RobotoSerifRegular,
+    fontWeight: fonts.weight.w700,
+    fontSize: fonts.size.s10,
+    color: Colors.DarkGreen,
+    marginVertical: scale(5),
+    marginHorizontal: scale(5),
+  },
+  bottomBtn: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: scale(50),
+    width: scale(50),
+    borderRadius: scale(25),
+    backgroundColor: Colors.White,
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    shadowColor: Colors.Black,
+    shadowRadius: 4,
+    shadowOffset: {height: 4, width: 0},
+    shadowOpacity: 0.2,
+    elevation: 2,
+  },
+  bottomBtnIcon: {
+    width: scale(16),
+    height: verticalScale(16),
+    resizeMode: 'contain',
+  },
+  otpInputView: {
+    marginHorizontal: scale(10),
+  },
+  otpContainer: {
+    marginTop: verticalScale(12),
+    width: scale(42),
+    height: verticalScale(42),
+    backgroundColor: Colors.White,
+    borderWidth: 0.3,
+    borderColor: Colors.LightGray,
+    borderRadius: 2,
+    textAlign: 'center',
+  },
+  JoinEventBtn: {
+    marginTop: verticalScale(20),
+  },
+  headingStyle: {
+    alignSelf: 'center',
+    justifyContent: 'center',
+    color: Colors.logoBackgroundColor,
+    fontSize: fonts.size.s16,
+    fontWeight: fonts.weight.w700,
+    fontFamily: fonts.type.RobotoSerifBlack,
+  },
+  JoinEventContainer: {
+    marginHorizontal: scale(15),
+    padding: moderateScale(15),
+    borderRadius: 15,
+    backgroundColor: Colors.White,
+    justifyContent: 'center',
+  },
+  EventOptionContainer: {
+    marginHorizontal: scale(20),
+    padding: moderateScale(10),
+    borderRadius: 10,
+    backgroundColor: Colors.White,
+    justifyContent: 'center',
+  },
+  customStyles: {
+    container: {
+      minHeight: Metrics.screenHeight * 0.45,
+      maxHeight: Metrics.screenHeight * 0.9,
+      borderTopLeftRadius: 40,
+      borderTopRightRadius: 40,
+    },
+    draggableIcon: {
+      backgroundColor: Colors.Black,
+      width: scale(60),
+      marginTop: verticalScale(20),
+    },
+  },
+  eventTitleStyle: {
+    justifyContent: 'flex-start',
+  },
+  taskManagerContainer: {
+    padding: moderateScale(10),
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: scale(20),
+    borderColor: Colors.BorderColor,
+    borderWidth: 1,
+    marginTop: 10,
+    borderRadius: 5,
+  },
+  taskManagerTextStyle: {
+    fontSize: fonts.size.s20,
+    color: Colors.logoBackgroundColor,
+    fontFamily: fonts.type.RobotoSerifRegular,
+    fontWeight: fonts.weight.w500,
+  },
+  eventOptionHeadingStyle: {
+    fontSize: fonts.size.s20,
+    color: Colors.Black,
+    fontFamily: fonts.type.RobotoSerifRegular,
+    fontWeight: fonts.weight.w500,
+  },
+  subTextStyle: {
+    paddingVertical: verticalScale(20),
+    fontSize: fonts.size.s16,
+    color: Colors.Gray,
+    fontFamily: fonts.type.RobotoSerifRegular,
+    fontWeight: fonts.weight.w400,
+  },
+  mainEventOptionContainer: {justifyContent: 'center', alignItems: 'center'},
+  closeIconContainer: {
+    height: verticalScale(30),
+    width: scale(30),
+    alignSelf: 'flex-end',
+  },
+  closeIconStyle: {
+    height: verticalScale(20),
+    width: scale(20),
+    resizeMode: 'contain',
+    tintColor: Colors.Red,
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    top: 6,
+  },
+  deleteEventContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 6,
+  },
+  noEventsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: verticalScale(90),
+  },
+  noEventsTxt: {
+    fontSize: fonts.size.s16,
+    fontWeight: fonts.weight.w600,
+    fontFamily: fonts.type.RobotoSerifRegular,
+    color: Colors.PlaceholderLight,
+  },
+  noEvents: {
+    fontSize: fonts.size.s16,
+    fontWeight: fonts.weight.w600,
+    fontFamily: fonts.type.RobotoSerifRegular,
+    margin: verticalScale(20),
+    color: Colors.PlaceholderLight,
+    textAlign: 'center',
+  },
+});
