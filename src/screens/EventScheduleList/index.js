@@ -12,6 +12,7 @@ import NavigationRoutes from '../../constants/NavigationRoutes';
 import {ToastError, ToastSuccess} from '../../constants/ToastConstants';
 import {
   deleteEventSchedule,
+  getEventObjectData,
   getEventScheduleList,
 } from '../../store/actions/EventAction';
 import Colors from '../../theme/Colors';
@@ -37,6 +38,9 @@ const EventScheduleList = ({route, navigation}) => {
   // get event schedule list
   useEffect(() => {
     dispatch(getEventScheduleList(eventObjectData.id));
+    return () => {
+      dispatch(getEventObjectData(eventObjectData.id));
+    };
   }, [dispatch, eventObjectData.id]);
   // on handle day press
   const handleDayPress = day => {

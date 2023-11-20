@@ -8,6 +8,7 @@ import * as RNLocalize from 'react-native-localize';
 import {Icons} from '../../assets';
 import CircleFilledIcon from '../CircleFilledIcon';
 import styles from './styles';
+import AppConstants from '../../constants/AppConstants';
 
 const CustomDatePicker = ({
   label,
@@ -26,7 +27,7 @@ const CustomDatePicker = ({
   const getTimeZoneDate = (date, mode) => {
     if (mode === 'time') {
       date = moment(
-        moment().format('YYYY-MM-DD') + ' ' + date,
+        moment().format(AppConstants.DateFormats.Default) + ' ' + date,
         'YYYY-MM-DD HH:mm',
       );
     }

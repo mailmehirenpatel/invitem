@@ -30,10 +30,10 @@ import styles from '../UpdateEventScreen/styles';
 const UpdateEventScreen = ({navigation, route}) => {
   const {eventObjectData} = useSelector(state => state.event);
   const [startDate, setStartDate] = useState(
-    moment(eventObjectData?.startDate).format('YYYY-MM-DD'),
+    moment(eventObjectData?.startDate).format(AppConstants.DateFormats.Default),
   );
   const [endDate, setEndDate] = useState(
-    moment(eventObjectData?.endDate).format('YYYY-MM-DD'),
+    moment(eventObjectData?.endDate).format(AppConstants.DateFormats.Default),
   );
   const [startTime, setStartTime] = useState(moment().format('HH:mm:ss'));
   const [endTime, setEndTime] = useState(moment().format('HH:mm:ss'));
@@ -126,8 +126,14 @@ const UpdateEventScreen = ({navigation, route}) => {
       eventName: eventName,
       description: eventDescription,
       locationId: selectLocation?.id,
-      startDate: moment(startDate).format('YYYY-MM-DD') + 'T' + startTime,
-      endDate: moment(endDate).format('YYYY-MM-DD') + 'T' + endTime,
+      startDate:
+        moment(startDate).format(AppConstants.DateFormats.Default) +
+        'T' +
+        startTime,
+      endDate:
+        moment(endDate).format(AppConstants.DateFormats.Default) +
+        'T' +
+        endTime,
       startTime: startTime ? startTime : null,
       endTime: endTime ? endTime : null,
       categoryId: selectEventType?.id,
@@ -286,9 +292,7 @@ const UpdateEventScreen = ({navigation, route}) => {
                 </View>
                 <View style={styles.eventDateRow}>
                   <Text style={styles.mainViewTimeWithDescription}>
-                    {moment(startDate).format(
-                      AppConstants.DateFormats.DayMonthYear,
-                    )}
+                    {moment(startDate).format(AppConstants.DateFormats.Default)}
                   </Text>
                   <CustomDatePicker
                     Mode="date"
@@ -327,9 +331,7 @@ const UpdateEventScreen = ({navigation, route}) => {
                 </View>
                 <View style={styles.eventDateRow}>
                   <Text style={styles.mainViewTimeWithDescription}>
-                    {moment(endDate).format(
-                      AppConstants.DateFormats.DayMonthYear,
-                    )}
+                    {moment(endDate).format(AppConstants.DateFormats.Default)}
                   </Text>
                   <CustomDatePicker
                     Mode="date"

@@ -33,30 +33,57 @@ const AddEventSchedule = ({route, navigation}) => {
   const [RsvpDescription, setRsvpDescription] = useState('');
 
   const onAddSchedule = useCallback(() => {
-    let MultiEventRequest = {
-      eventId: eventObjectData?.id,
-      scheduleType: 0,
-      startDate: moment(startDate).format('YYYY-MM-DD') + 'T' + startTime,
-      endDate: moment(startDate).format('YYYY-MM-DD') + 'T' + endTime,
-      startTime: null,
-      endTime: null,
-      dayOfMonth: 0,
-      customSchedules: [],
-      title: RsvpTitle,
-      description: RsvpDescription,
-      locationId: selectLocation?.id,
-    };
-    dispatch(
-      requestMultipalEvent(MultiEventRequest, (isSuccess, message) => {
-        if (isSuccess) {
-          ToastSuccess(message);
-          navigation.navigate(NavigationRoutes.EventScheduleList);
-          dispatch(getEventScheduleList(eventObjectData.id));
-        } else {
-          ToastError(message);
-        }
-      }),
-    );
+    //form validation
+    if (RsvpTitle.length === 0) {
+      ToastError(Strings.EmptyRSVPTitle);
+    } else if (RsvpDescription.length === 0) {
+      ToastError(Strings.EmptyRSVPDesc);
+    } else if (
+      moment(startDate).format(AppConstants.DateFormats.Default) ===
+      moment().format(AppConstants.DateFormats.Default)
+    ) {
+      ToastError(Strings.SelectStartDate);
+    } else if (startTime === null) {
+      ToastError(Strings.SelectStartTime);
+    } else if (endTime === null) {
+      ToastError(Strings.SelectEndTime);
+    } else if (startTime === endTime) {
+      ToastError(Strings.endTimeValidation);
+    } else if (selectLocation?.id === undefined) {
+      ToastError(Strings.EmptyLocationName);
+    } else {
+      let MultiEventRequest = {
+        eventId: eventObjectData?.id,
+        scheduleType: 0,
+        startDate:
+          moment(startDate).format(AppConstants.DateFormats.Default) +
+          'T' +
+          startTime,
+        endDate:
+          moment(startDate).format(AppConstants.DateFormats.Default) +
+          'T' +
+          endTime,
+        startTime: null,
+        endTime: null,
+        dayOfMonth: 0,
+        customSchedules: [],
+        title: RsvpTitle,
+        description: RsvpDescription,
+        locationId: selectLocation?.id,
+      };
+
+      dispatch(
+        requestMultipalEvent(MultiEventRequest, (isSuccess, message) => {
+          if (isSuccess) {
+            ToastSuccess(message);
+            navigation.navigate(NavigationRoutes.EventScheduleList);
+            dispatch(getEventScheduleList(eventObjectData.id));
+          } else {
+            ToastError(message);
+          }
+        }),
+      );
+    }
   }, [
     RsvpDescription,
     RsvpTitle,
@@ -64,7 +91,7 @@ const AddEventSchedule = ({route, navigation}) => {
     endTime,
     eventObjectData.id,
     navigation,
-    selectLocation?.id,
+    selectLocation,
     startDate,
     startTime,
   ]);
@@ -102,9 +129,7 @@ const AddEventSchedule = ({route, navigation}) => {
             </View>
             <View style={styles.eventDateRow}>
               <Text style={styles.mainViewTimeWithDescription}>
-                {moment(startDate).format(
-                  AppConstants.DateFormats.DayMonthYear,
-                )}
+                {moment(startDate).format(AppConstants.DateFormats.Default)}
               </Text>
               <CustomDatePicker
                 Mode="date"

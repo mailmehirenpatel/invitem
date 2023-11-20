@@ -15,8 +15,6 @@ import {getImageByEventId} from '../../../../store/actions/ChatAction';
 
 const EventImage = ({eventObjectData}) => {
   const {imageData} = useSelector(state => state.chat);
-  //const {eventData} = useSelector(state => state.event); // Get Event data through useSelector
-  console.log(eventObjectData?.id);
   const [isModalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setEvent] = useState(undefined);
   const [refreshing, setRefreshing] = useState(false); // Pull to refresh.

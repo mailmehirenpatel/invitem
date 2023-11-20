@@ -363,9 +363,7 @@ const AddEventScreen = ({navigation, route}) => {
                 </View>
                 <View style={styles.eventDateRow}>
                   <Text style={styles.mainViewTimeWithDescription}>
-                    {moment(startDate).format(
-                      AppConstants.DateFormats.DayMonthYear,
-                    )}
+                    {moment(startDate).format(AppConstants.DateFormats.Default)}
                   </Text>
                   <CustomDatePicker
                     Mode="date"
@@ -406,9 +404,7 @@ const AddEventScreen = ({navigation, route}) => {
                 </View>
                 <View style={styles.eventDateRow}>
                   <Text style={styles.mainViewTimeWithDescription}>
-                    {moment(endDate).format(
-                      AppConstants.DateFormats.DayMonthYear,
-                    )}
+                    {moment(endDate).format(AppConstants.DateFormats.Default)}
                   </Text>
                   <CustomDatePicker
                     Mode="date"
@@ -651,9 +647,7 @@ const AddEventScreen = ({navigation, route}) => {
                 </View>
                 <View style={styles.eventDateRow}>
                   <Text style={styles.mainViewTimeWithDescription}>
-                    {moment(monthDate).format(
-                      AppConstants.DateFormats.DayMonthYear,
-                    )}
+                    {moment(monthDate).format(AppConstants.DateFormats.Default)}
                   </Text>
                   <CustomDatePicker
                     Mode="date"

@@ -37,7 +37,9 @@ const AddRSVP = ({route}) => {
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [SelectedDate, setDate] = useState(moment().format('YYYY-MM-DD'));
+  const [SelectedDate, setDate] = useState(
+    moment().format(AppConstants.DateFormats.Default),
+  );
   const [SelectedTime, setTime] = useState(moment().format('HH:mm:ss'));
   const [RsvpList, setRsvpList] = useState([]);
 
@@ -64,7 +66,10 @@ const AddRSVP = ({route}) => {
       infoChirpId: InfoChirpsId,
       title: title,
       description: description,
-      date: moment(SelectedDate).format('YYYY-MM-DD') + 'T' + SelectedTime,
+      date:
+        moment(SelectedDate).format(AppConstants.DateFormats.Default) +
+        'T' +
+        SelectedTime,
     };
 
     if (title === '') {
@@ -80,7 +85,7 @@ const AddRSVP = ({route}) => {
             dispatch(getEventInfoChirps(eventObjectData.id));
             setTitle('');
             setDescription('');
-            setDate(moment().format('YYYY-MM-DD'));
+            setDate(moment().format(AppConstants.DateFormats.Default));
             setTime(moment().format('HH:mm:ss'));
             rsvpInfochirpsId &&
               dispatch(
@@ -146,11 +151,11 @@ const AddRSVP = ({route}) => {
             <Text style={styles.titleText}>{Strings.Date}</Text>
             <View style={styles.mainViewSubContainer}>
               <Text style={styles.mainViewTimeWithDescription}>
-                {moment(SelectedDate).format('YYYY-MM-DD')}
+                {moment(SelectedDate).format(AppConstants.DateFormats.Default)}
               </Text>
               <CustomDatePicker
                 Mode="date"
-                minDate={moment().format('YYYY-MM-DD')}
+                minDate={moment().format(AppConstants.DateFormats.Default)}
                 selectedDate={SelectedDate}
                 setDate={date => {
                   setDate(date);

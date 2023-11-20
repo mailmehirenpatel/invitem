@@ -33,29 +33,49 @@ const UpdateEventScheduleList = ({route, navigation}) => {
   // get schedule list API call
 
   const onUpdateSchedule = useCallback(() => {
-    let RequestData = {
-      id: eventScheduleList?.id,
-      eventId: eventObjectData?.id,
-      eventDate: moment(startDate).format('YYYY-MM-DD'),
-      startTime: startTime,
-      endTime: endTime,
-      locationId: selectLocation?.id,
-      rsvpTitle: RsvpTitle,
-      rsvpDescription: RsvpDescription,
-    };
-    //console.log(RequestData);
+    //form validation
+    if (RsvpTitle.length === 0) {
+      ToastError(Strings.EmptyRSVPTitle);
+    } else if (RsvpDescription.length === 0) {
+      ToastError(Strings.EmptyRSVPDesc);
+    } else if (
+      moment(startDate).format(AppConstants.DateFormats.Default) ===
+      moment().format(AppConstants.DateFormats.Default)
+    ) {
+      ToastError(Strings.SelectStartDate);
+    } else if (startTime === null) {
+      ToastError(Strings.SelectStartTime);
+    } else if (endTime === null) {
+      ToastError(Strings.SelectEndTime);
+    } else if (startTime === endTime) {
+      ToastError(Strings.endTimeValidation);
+    } else if (selectLocation?.id === undefined) {
+      ToastError(Strings.EmptyLocationName);
+    } else {
+      let RequestData = {
+        id: eventScheduleList?.id,
+        eventId: eventObjectData?.id,
+        eventDate: moment(startDate).format(AppConstants.DateFormats.Default),
+        startTime: startTime,
+        endTime: endTime,
+        locationId: selectLocation?.id,
+        rsvpTitle: RsvpTitle,
+        rsvpDescription: RsvpDescription,
+      };
+      //console.log(RequestData);
 
-    dispatch(
-      requestUpdateSchedule(RequestData, (isSuccess, message) => {
-        if (isSuccess) {
-          ToastSuccess(message);
-          dispatch(getEventScheduleList(eventObjectData.id));
-          navigation.navigate(NavigationRoutes.EventScheduleList);
-        } else {
-          ToastError(message);
-        }
-      }),
-    );
+      dispatch(
+        requestUpdateSchedule(RequestData, (isSuccess, message) => {
+          if (isSuccess) {
+            ToastSuccess(message);
+            dispatch(getEventScheduleList(eventObjectData.id));
+            navigation.navigate(NavigationRoutes.EventScheduleList);
+          } else {
+            ToastError(message);
+          }
+        }),
+      );
+    }
   }, [
     RsvpDescription,
     RsvpTitle,
@@ -121,7 +141,7 @@ const UpdateEventScheduleList = ({route, navigation}) => {
           </View>
           <View style={styles.eventDateRow}>
             <Text style={styles.mainViewTimeWithDescription}>
-              {moment(startDate).format(AppConstants.DateFormats.DayMonthYear)}
+              {moment(startDate).format(AppConstants.DateFormats.Default)}
             </Text>
             <CustomDatePicker
               Mode="date"

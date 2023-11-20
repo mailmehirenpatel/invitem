@@ -371,4 +371,7 @@ export const Strings = {
   NoUpcomingEventFound: 'Upcoming Event List Not Found',
   SearchUser: 'Search Users',
   DeleteEvent: 'Delete Event',
+  SelectStartDate: 'Please Select Start Date',
+  SelectStartTime: 'Please Select Start Time',
+  SelectEndTime: 'Please Select End Time',
 };
