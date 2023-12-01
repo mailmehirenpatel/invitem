@@ -10,7 +10,10 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.LightBlueBackground,
   },
-
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: Colors.White,
+  },
   contentContainer: {
     flex: 1,
     backgroundColor: Colors.LightBlueBackground,
@@ -147,11 +150,14 @@ export default StyleSheet.create({
   },
   selectPollOptionImageContainer: {flexDirection: 'row', alignItems: 'center'},
   selectedPollImage: {
-    height: verticalScale(80),
-    width: scale(80),
+    height: verticalScale(40),
+    width: scale(40),
     resizeMode: 'contain',
     margin: scale(5),
     borderRadius: 5,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: Colors.Black,
   },
   renderEventPollMainView: {
     backgroundColor: Colors.White,
@@ -183,8 +189,8 @@ export default StyleSheet.create({
   },
 
   optionImageStyle: {
-    height: verticalScale(100),
-    width: scale(100),
+    height: verticalScale(50),
+    width: scale(50),
     resizeMode: 'contain',
     borderRadius: 5,
     marginHorizontal: scale(10),

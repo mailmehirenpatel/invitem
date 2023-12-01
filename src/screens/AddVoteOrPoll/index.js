@@ -45,7 +45,9 @@ const AddVoteOrPoll = ({route}) => {
   const [startDate, setStartDate] = useState(
     moment(eventObjectData?.endDate).format(AppConstants.DateFormats.Default),
   );
-  const [VoteOptionsList, setVoteOptionsList] = useState([]);
+  const [VoteOptionsList, setVoteOptionsList] = useState([0]);
+  const [VoteOptionsImageList, setVoteOptionsImageList] = useState(['']);
+
   const [VoteSelectedImage, setVoteSelectedImage] = useState('');
   const [voteOption, setVoteOption] = useState('');
 
@@ -66,19 +68,23 @@ const AddVoteOrPoll = ({route}) => {
       );
   }, [PollInfochirpsId, dispatch, eventObjectData?.id]);
 
-  // Add Button Polls
-  const onAddOptionPress = useCallback(() => {
-    let optionData = {
-      id: Math.floor(Math.random() * 100000),
-      optionName: voteOption,
-      image: VoteSelectedImage,
-    };
-    setVoteOptionsList(current => [...current, optionData]);
+  const setInputValue = (index, value) => {
+    const newArray = [...VoteOptionsList];
+    newArray[index] = value;
+    setVoteOptionsList(newArray);
     setVoteOption('');
     setVoteSelectedImage('');
-  }, [VoteSelectedImage, voteOption]);
+  };
 
-  const onAddImage = useCallback(() => {
+  // Add Button Polls
+  const onAddOptionPress = useCallback(() => {
+    setVoteOptionsList(current => [...current, voteOption]);
+    setVoteOption('');
+    setVoteSelectedImage('');
+  }, [voteOption]);
+
+  const onAddImage = key => event => {
+    console.log(key);
     imageSelection(false).then(res => {
       dispatch(
         uploadMediaRequest(
@@ -86,23 +92,37 @@ const AddVoteOrPoll = ({route}) => {
           AppConstants.fileDriveName.Profile,
           (isUploaded, data) => {
             isUploaded && setVoteSelectedImage(data[0].fileUrl);
+            const newArray = [...VoteOptionsImageList];
+            newArray[key] = data[0].fileUrl;
+            setVoteOptionsImageList(newArray);
           },
         ),
       );
     });
-  }, [dispatch]);
+  };
 
   const onSave = useCallback(() => {
+    const resCheckOptionList = VoteOptionsList.filter(element => {
+      return element !== null && element !== '' && element !== undefined;
+    });
+
     const AddPollRequestData = {
       id: 0,
       eventId: eventObjectData.id,
       infoChirpId: InfoChirpsId,
       title: voteTitle,
       expireOn: startDate,
-      options: VoteOptionsList.map(i => {
-        return {optionName: i.optionName, image: i.image};
+      options: resCheckOptionList.map((i, index) => {
+        return {
+          optionName: i,
+          image:
+            VoteOptionsImageList[index] === undefined
+              ? ''
+              : VoteOptionsImageList[index],
+        };
       }),
     };
+
     if (voteTitle === '') {
       ToastError(Strings.EmptyVoteTitle);
     } else if (VoteOptionsList.length < 2) {
@@ -112,8 +132,9 @@ const AddVoteOrPoll = ({route}) => {
         AddPollInfoChirps(AddPollRequestData, (isSuccess, message) => {
           if (isSuccess) {
             setVoteTitle('');
-            setVoteOptionsList([]);
+            setVoteOptionsList([0]);
             setVoteSelectedImage('');
+            setVoteOptionsImageList(['']);
             ToastSuccess(message);
             dispatch(getEventInfoChirps(eventObjectData.id));
             PollInfochirpsId &&
@@ -135,6 +156,7 @@ const AddVoteOrPoll = ({route}) => {
   }, [
     InfoChirpsId,
     PollInfochirpsId,
+    VoteOptionsImageList,
     VoteOptionsList,
     dispatch,
     eventObjectData.id,
@@ -254,7 +276,7 @@ const AddVoteOrPoll = ({route}) => {
           </View>
 
           <View style={styles.titleView}>
-            <Text style={styles.titleText}>{Strings.Date}</Text>
+            <Text style={styles.titleText}>{Strings.VoteDateTitle}</Text>
             <View style={styles.mainViewSubContainer}>
               <Text style={styles.mainViewTimeWithDescription}>
                 {moment(startDate).format(AppConstants.DateFormats.TimeDate)}
@@ -276,64 +298,66 @@ const AddVoteOrPoll = ({route}) => {
           <View style={styles.voteOptionView}>
             <View style={styles.voteOptionUpperView}>
               <Text style={styles.titleText}>{Strings.VoteOption}</Text>
-
-              {voteOption.length > 0 && (
-                <Pressable onPress={onAddOptionPress}>
-                  <Text style={styles.addMorePollOption}>
-                    {Strings.AddMoreOption} +
-                  </Text>
-                </Pressable>
-              )}
             </View>
-
-            {VoteOptionsList && (
-              <FlatList
-                style={styles.optionFlatListStyle}
-                scrollEnabled={false}
-                data={VoteOptionsList}
-                keyExtractor={item => item?.id.toString()}
-                renderItem={({item}) => (
-                  <View style={styles.optionListContainer}>
-                    <Text style={{color: Colors.logoBackgroundColor}}>
-                      {item.optionName}
-                    </Text>
+            <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+              {VoteOptionsList &&
+                VoteOptionsList.map((item, index) => (
+                  <View style={styles.optionListContainer} key={index}>
+                    {VoteOptionsImageList && (
+                      <FastImageView
+                        style={styles.optionImageStyle}
+                        defaultSource={Images.EventImagePlaceholder}
+                        uri={
+                          VoteOptionsImageList[index]
+                            ? `${ApiConstants.ImageBaseUrl}/${VoteOptionsImageList[index]}`
+                            : ''
+                        }
+                      />
+                    )}
+                    <CustomTextInput
+                      value={item}
+                      onChangeText={value => setInputValue(index, value)}
+                      placeholder={Strings.VoteOptionHere}
+                      inputStyle={styles.textInputStyle}
+                      containerStyle={styles.textInputContainerStyle}
+                      onSubmitEditing={onAddOptionPress}
+                      autoCapitalize={'words'}
+                    />
                     <View style={styles.deleteOptionList}>
-                      {item.image && (
-                        <FastImageView
-                          style={styles.optionImageStyle}
-                          defaultSource={Images.EventImagePlaceholder}
-                          uri={
-                            item.image
-                              ? `${ApiConstants.ImageBaseUrl}/${item.image}`
-                              : ''
-                          }
+                      <TouchableOpacity key={index} onPress={onAddImage(index)}>
+                        <Image
+                          source={Icons.addImageIcn}
+                          style={styles.addImageStyle}
                         />
-                      )}
+                      </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => {
-                          Alert.alert(
-                            Strings.DeletePollOptionConfirmationPoll,
-                            item.optionName,
-                            [
-                              {
-                                text: Strings.No,
-                                onPress: () => console.log('No Pressed'),
-                                style: Strings.cancel,
-                              },
-                              {
-                                text: Strings.Yes,
-                                onPress: () => {
-                                  let NewOptionsList = VoteOptionsList.filter(
-                                    i => {
-                                      return i.id !== item.id;
-                                    },
-                                  );
-                                  setVoteOptionsList(NewOptionsList);
+                          if (VoteOptionsList.length > 1) {
+                            Alert.alert(
+                              Strings.DeletePollOptionConfirmationPoll,
+                              item,
+                              [
+                                {
+                                  text: Strings.No,
+                                  onPress: () => console.log('No Pressed'),
+                                  style: Strings.cancel,
                                 },
-                              },
-                            ],
-                            {cancelable: false},
-                          );
+                                {
+                                  text: Strings.Yes,
+                                  onPress: () => {
+                                    let NewOptionsList = VoteOptionsList.filter(
+                                      i => {
+                                        console.log(i + ' and ' + item);
+                                        return i !== item;
+                                      },
+                                    );
+                                    setVoteOptionsList(NewOptionsList);
+                                  },
+                                },
+                              ],
+                              {cancelable: false},
+                            );
+                          }
                         }}>
                         <Image
                           source={Icons.deleteIcon}
@@ -342,40 +366,8 @@ const AddVoteOrPoll = ({route}) => {
                       </TouchableOpacity>
                     </View>
                   </View>
-                )}
-              />
-            )}
-            <View style={styles.addPollOptionContainer}>
-              <CustomTextInput
-                value={voteOption}
-                onChangeText={val => setVoteOption(val)}
-                placeholder={Strings.VoteOptionHere}
-                inputStyle={styles.textInputStyle}
-                containerStyle={styles.textInputContainerStyle}
-                autoCapitalize={'words'}
-              />
-              <View style={styles.selectPollOptionImageContainer}>
-                {VoteSelectedImage && (
-                  <FastImageView
-                    style={styles.selectedPollImage}
-                    defaultSource={Images.EventImagePlaceholder}
-                    uri={
-                      VoteOptionsList
-                        ? `${ApiConstants.ImageBaseUrl}/${VoteSelectedImage}`
-                        : ''
-                    }
-                  />
-                )}
-                <TouchableOpacity onPress={onAddImage}>
-                  <Image
-                    source={Icons.addImageIcn}
-                    style={styles.addImageStyle}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              <View />
-            </View>
+                ))}
+            </ScrollView>
           </View>
         </View>
 

@@ -140,6 +140,7 @@ const UpdateEventScreen = ({navigation, route}) => {
       isMultipleEvent: eventObjectData?.isMultipleEvent,
     };
     //console.log(RequestData);
+    //console.log(eventObjectData);
 
     if (eventName.length === 0) {
       ToastError(Strings.BlankEventError);
@@ -167,6 +168,8 @@ const UpdateEventScreen = ({navigation, route}) => {
                       ToastSuccess(message);
                       dispatch(getEventData());
                       navigation.navigate(NavigationRoutes.EventScreen);
+                    } else {
+                      ToastError(message);
                     }
                   },
                 ),
@@ -182,6 +185,8 @@ const UpdateEventScreen = ({navigation, route}) => {
             ToastSuccess(message);
             dispatch(getEventData());
             navigation.navigate(NavigationRoutes.EventScreen);
+          } else {
+            ToastError(message);
           }
         }),
       );
@@ -192,8 +197,7 @@ const UpdateEventScreen = ({navigation, route}) => {
     endTime,
     eventDescription,
     eventName,
-    eventObjectData.id,
-    eventObjectData?.isMultipleEvent,
+    eventObjectData,
     imagePath,
     navigation,
     selectEventType,
@@ -300,6 +304,7 @@ const UpdateEventScreen = ({navigation, route}) => {
                     selectedDate={startDate}
                     setDate={date => {
                       setStartDate(date);
+                      setEndDate(date);
                     }}
                   />
                 </View>

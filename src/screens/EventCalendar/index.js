@@ -18,6 +18,7 @@ import {
 import {getEventInfoChirps} from '../../store/actions/InfoChirpsAction';
 import {onMute} from '../../store/slice/eventSlice';
 import styles from './styles';
+import fonts from '../../config/fonts';
 
 const UpcomingEvents = ({navigation}) => {
   // For future use
@@ -162,7 +163,13 @@ const UpcomingEvents = ({navigation}) => {
               />
             ) : (
               <View style={styles.emptyDataView}>
-                <Text style={styles.emptyDataText}>
+                <Text
+                  style={{
+                    fontSize: fonts.size.s15,
+                    textAlign: 'center',
+                    fontFamily: fonts.type.RobotoSerifRegular,
+                    fontWeight: fonts.weight.w500,
+                  }}>
                   {Strings.NoUpcomingEventFound}
                 </Text>
               </View>

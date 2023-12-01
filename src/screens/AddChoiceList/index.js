@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -31,9 +32,9 @@ import {imageSelection} from '../../utils';
 import styles from './styles';
 
 const AddChoiceList = ({route}) => {
-  const [choiceListTitle, setChoiceListTitle] = useState();
-  const [choiceListOptions, setChoiceListOptions] = useState([]);
-  const [choiceListOptionList, setChoiceListOptionList] = useState([]);
+  const [choiceListTitle, setChoiceListTitle] = useState('');
+  const [choiceListOptions, setChoiceListOptions] = useState('');
+  const [choiceListOptionList, setChoiceListOptionList] = useState([0]);
   const [selectedFile, setSelectedFile] = useState('');
   const {InfoChirpsId} = route.params || {};
   const {eventObjectData} = useSelector(state => state.event);
@@ -44,6 +45,14 @@ const AddChoiceList = ({route}) => {
   const ChoiceListInfochirpsId = EventInfoChirpsData.find(
     i => i.name === 'add choicelist',
   );
+
+  const setInputValue = (index, value) => {
+    const newArray = [...choiceListOptionList];
+    newArray[index] = value;
+    setChoiceListOptionList(newArray);
+    setChoiceListOptions('');
+  };
+
   const dispatch = useDispatch();
 
   /** Get choice list infotabs data */
@@ -77,24 +86,29 @@ const AddChoiceList = ({route}) => {
 
   // Add Choice-List
   const onAddOptionPress = useCallback(() => {
-    let optionData = {
-      id: Math.floor(Math.random() * 100000),
-      optionName: choiceListOptions,
-    };
-    setChoiceListOptionList(current => [...current, optionData]);
+    setChoiceListOptionList(current => [...current, choiceListOptions]);
     setChoiceListOptions('');
-  }, [choiceListOptions]);
+    console.log(choiceListOptionList);
+  }, [choiceListOptionList, choiceListOptions]);
 
   const onSave = useCallback(() => {
+    const resCheckOptionList = choiceListOptionList.filter(element => {
+      return element !== null && element !== '' && element !== undefined;
+    });
+    let optionData = [];
+    resCheckOptionList.map(i => {
+      optionData.push({
+        optionName: i,
+      });
+    });
+
     const AddChoiceListRequestData = {
       id: 0,
       eventId: eventObjectData.id,
       infoChirpId: InfoChirpsId,
       title: choiceListTitle,
       image: selectedFile,
-      options: choiceListOptionList.map(i => {
-        return {optionName: i.optionName};
-      }),
+      options: optionData,
     };
     if (choiceListTitle === '') {
       ToastError(Strings.EmptyChoiceListTitleTitle);
@@ -107,7 +121,7 @@ const AddChoiceList = ({route}) => {
           (isSuccess, message) => {
             if (isSuccess) {
               setChoiceListTitle('');
-              setChoiceListOptionList([]);
+              setChoiceListOptionList([0]);
               setSelectedFile('');
               ToastSuccess(message);
               dispatch(getEventInfoChirps(eventObjectData.id));
@@ -137,6 +151,7 @@ const AddChoiceList = ({route}) => {
     eventObjectData.id,
     selectedFile,
   ]);
+
   const renderChoiceList = useCallback(
     ({item, index}) => {
       return (
@@ -249,69 +264,53 @@ const AddChoiceList = ({route}) => {
                 <Text style={styles.titleText}>
                   {Strings.choiceListOptions}
                 </Text>
-                {choiceListOptions.length > 0 && (
-                  <Pressable onPress={onAddOptionPress}>
-                    <Text style={styles.addMorePollOption}>
-                      {Strings.AddMoreOption} +
-                    </Text>
-                  </Pressable>
-                )}
               </View>
-              {choiceListOptionList && (
-                <FlatList
-                  style={styles.optionFlatListStyle}
-                  scrollEnabled={false}
-                  data={choiceListOptionList}
-                  keyExtractor={item => item?.id?.toString()}
-                  renderItem={({item, index}) => {
-                    return (
-                      <View style={styles.optionListContainer} key={index}>
-                        <Text style={{color: Colors.logoBackgroundColor}}>
-                          {item.optionName}
-                        </Text>
-                        <TouchableOpacity
-                          onPress={() => {
-                            Alert.alert(
-                              Strings.DeletePollOptionConfirmationPoll,
-                              item.optionName,
-                              [
-                                {
-                                  text: Strings.No,
-                                  onPress: () => console.log('No Pressed'),
-                                  style: Strings.cancel,
+              <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+                {choiceListOptionList &&
+                  choiceListOptionList.map((item, index) => (
+                    <View style={styles.optionListContainer} key={index}>
+                      <TextInput
+                        value={item}
+                        placeholder={Strings.AddListHere}
+                        autoCapitalize={'words'}
+                        returnKeyType={'done'}
+                        style={{color: Colors.logoBackgroundColor}}
+                        onChangeText={value => setInputValue(index, value)}
+                        onSubmitEditing={onAddOptionPress}
+                      />
+                      <TouchableOpacity
+                        onPress={() => {
+                          Alert.alert(
+                            Strings.DeletePollOptionConfirmationPoll,
+                            item,
+                            [
+                              {
+                                text: Strings.No,
+                                onPress: () => console.log('No Pressed'),
+                                style: Strings.cancel,
+                              },
+                              {
+                                text: Strings.Yes,
+                                onPress: () => {
+                                  let NewOptionsList =
+                                    choiceListOptionList.filter(i => {
+                                      return i !== item;
+                                    });
+                                  setChoiceListOptionList(NewOptionsList);
                                 },
-                                {
-                                  text: Strings.Yes,
-                                  onPress: () => {
-                                    let NewOptionsList =
-                                      choiceListOptionList.filter(i => {
-                                        return i.id !== item.id;
-                                      });
-                                    setChoiceListOptionList(NewOptionsList);
-                                  },
-                                },
-                              ],
-                              {cancelable: false},
-                            );
-                          }}>
-                          <Image
-                            source={Icons.deleteIcon}
-                            style={styles.deleteIconStyle}
-                          />
-                        </TouchableOpacity>
-                      </View>
-                    );
-                  }}
-                />
-              )}
-              <CustomTextInput
-                value={choiceListOptions}
-                onChangeText={val => setChoiceListOptions(val)}
-                placeholder={Strings.ChoiceOptionHere}
-                inputStyle={styles.textInputStyle}
-                containerStyle={styles.textInputContainerStyle}
-                autoCapitalize={'words'}
-              />
+                              },
+                            ],
+                            {cancelable: false},
+                          );
+                        }}>
+                        <Image
+                          source={Icons.deleteIcon}
+                          style={styles.deleteIconStyle}
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  ))}
+              </ScrollView>
             </View>
           </View>
           <View>

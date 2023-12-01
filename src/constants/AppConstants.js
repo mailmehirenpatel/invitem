@@ -7,7 +7,7 @@ const AppConstants = {
     DayMonth: 'DD MMMM',
     Day_Month_Year: 'DD MMMM YYYY',
     DayDateMonthYear: 'dddd, DD MMMM YYYY',
-    TimeDate: 'hh:mmA, ddd Do MMMM',
+    TimeDate: 'HH:mm A, ddd Do MMMM YYYY',
   },
   TimeFormats: {
     HourMinutesAntiMeridian: 'H:mm a',

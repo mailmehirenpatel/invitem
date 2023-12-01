@@ -16,6 +16,10 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.LightBlueBackground,
   },
+  scrollViewContainer: {
+    flex: 1,
+    backgroundColor: Colors.White,
+  },
   contentContainer: {
     flex: 1,
     backgroundColor: Colors.LightBlueBackground,

@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {FlatList, Image, Pressable, Text, View} from 'react-native';
+import {FlatList, Image, Pressable, Text, View, TextInput} from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import {useDispatch, useSelector} from 'react-redux';
 import {Icons, Images} from '../../assets';
@@ -17,13 +17,29 @@ import styles from './styles';
 
 const EventChoiceList = ({navigation, route}) => {
   const [choiceList, setChoiceList] = useState([]);
+  const [note, SetNote] = React.useState('');
+  const [choiceListNote, setChoiceListNote] = useState([]);
+
   const {EventInfoChirpsData} = useSelector(state => state.infoChirps);
   const {eventObjectData} = useSelector(state => state.event);
   const ChoiceListInfochirpsId = EventInfoChirpsData.find(
     i => i.name === 'add choicelist',
   );
-
   const dispatch = useDispatch();
+
+  const loadDataOnlyOnce = result => {
+    //console.log('note ' + result);
+    if (note === '') {
+      const newArray = [];
+      result.map((ii, index) => {
+        newArray[index] = ii.choiceNote;
+      });
+      //console.log(newArray);
+      setChoiceListNote(newArray);
+      SetNote('done');
+    }
+  };
+
   useEffect(() => {
     ChoiceListInfochirpsId &&
       dispatch(
@@ -32,16 +48,24 @@ const EventChoiceList = ({navigation, route}) => {
           ChoiceListInfochirpsId.id,
           result => {
             result && setChoiceList(result);
+            loadDataOnlyOnce(result);
           },
         ),
       );
   }, [ChoiceListInfochirpsId, dispatch, eventObjectData?.id]);
 
+  const setInputValue = (index, value) => {
+    const newArray = [...choiceListNote];
+    newArray[index] = value;
+    setChoiceListNote(newArray);
+  };
+
   const onChoicePress = useCallback(
-    item => {
+    (item, index) => {
       const requestChoiceanswerData = {
         choiceListId: item.choiceListId,
         choiceListOptionId: item.options.filter(j => j.isSelected)[0]?.optionId,
+        choiceNote: choiceListNote[index],
       };
 
       item.options.filter(j => j.isSelected).length !== 0
@@ -63,12 +87,12 @@ const EventChoiceList = ({navigation, route}) => {
         : ToastError(Strings.EmptyPollOption);
     },
 
-    [dispatch, navigation],
+    [choiceListNote, dispatch, navigation],
   );
 
   // get choice list data
   const renderItem = useCallback(
-    ({item}) => {
+    ({item, index}) => {
       return (
         <ScrollView>
           <View style={styles.renderEventPollMainView}>
@@ -126,11 +150,19 @@ const EventChoiceList = ({navigation, route}) => {
                 }
               />
             )}
+            <TextInput
+              style={styles.inputNote}
+              key={'inputNote' + index}
+              onChangeText={value => setInputValue(index, value)}
+              value={choiceListNote[index]}
+              placeholder="Add note"
+              keyboardType="default"
+            />
             <View style={styles.voteView}>
               <Pressable
                 style={styles.voteBtn}
                 onPress={() => {
-                  onChoicePress(item);
+                  onChoicePress(item, index);
                 }}>
                 <Text style={styles.voteText}>{Strings.Vote}</Text>
               </Pressable>
@@ -139,7 +171,7 @@ const EventChoiceList = ({navigation, route}) => {
         </ScrollView>
       );
     },
-    [choiceList, onChoicePress],
+    [choiceList, choiceListNote, onChoicePress, setInputValue],
   );
   return (
     <View style={styles.container}>

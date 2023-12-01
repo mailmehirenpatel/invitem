@@ -71,15 +71,10 @@ export default StyleSheet.create({
   emptyDataView: {
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
     height:
       Platform.OS === 'android'
         ? Metrics.screenHeight - 230
         : Metrics.screenHeight - 200,
-  },
-  emptyDataText: {
-    fontFamily: fonts.type.RobotoSerifRegular,
-    fontSize: fonts.size.s15,
-    fontWeight: fonts.weight.w500,
-    color: Colors.RejectedRedColor,
   },
 });

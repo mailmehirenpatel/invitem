@@ -7,6 +7,7 @@ import {
   RefreshControl,
   SafeAreaView,
   Text,
+  ImageBackground,
   View,
 } from 'react-native';
 import {FloatingAction} from 'react-native-floating-action';
@@ -179,19 +180,17 @@ const EventScreen = ({navigation}) => {
   // Search Events List
   const onSearch = useCallback(
     value => {
-      setSearchText(value);
-      if (value?.length && listEvents?.length > 0) {
-        const filterEvents = listEvents?.filter(e =>
+      if (value?.length > 0) {
+        const filterEvents = eventData?.filter(e =>
           e.eventName.toLowerCase().includes(value.toLowerCase()),
         );
         setEventList(filterEvents);
-      } else if (value !== listEvents.eventName) {
-        ToastError(Strings.NoDataAvailable);
-      } else {
+      } else if (value?.length === 0) {
         setEventList(eventData);
       }
+      setSearchText(value);
     },
-    [eventData, listEvents],
+    [eventData],
   );
   // Join event api call
   const onJoinEvent = useCallback(() => {
@@ -242,130 +241,154 @@ const EventScreen = ({navigation}) => {
         titleHeadingStyle={styles.eventTitleStyle}
       />
       <View style={styles.contentContainer}>
-        <SearchTextInput
-          iconStyle={styles.searchIcon}
-          containerStyle={styles.searchContainerStyle}
-          textInputStyle={styles.textInput}
-          placeholder={Strings.SearchEvent}
-          placeholderTextColor={Colors.Gray}
-          value={searchText}
-          onChangeText={onSearch}
-        />
-
-        {listEvents?.length > 0 ? (
-          <FlatGrid
-            extraData={listEvents}
-            style={styles.gridContainer}
-            showsVerticalScrollIndicator={false}
-            maxItemsPerRow={3}
-            itemDimension={100}
-            data={listEvents ? listEvents : []}
-            keyExtractor={item => item?.id}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            renderItem={({item, index}) => {
-              return (
-                <Pressable
-                  key={index}
-                  style={styles.listDetailView}
-                  onPress={onEventPress(item)}>
-                  <FastImageView
-                    defaultSource={Images.EventImagePlaceholder}
-                    uri={
-                      item.image
-                        ? `${ApiConstants.ImageBaseUrl}/${item.image}`
-                        : ''
-                    }
-                    style={styles.eventImage}
-                  />
-                  <Text style={styles.eventText} numberOfLines={1}>
-                    {item.eventName}
-                  </Text>
-                </Pressable>
-              );
-            }}
+        <ImageBackground
+          resizeMode={'cover'}
+          style={{flex: 1}}
+          source={Images.InvitemBackgroundImg}>
+          <SearchTextInput
+            iconStyle={styles.searchIcon}
+            containerStyle={styles.searchContainerStyle}
+            textInputStyle={styles.textInput}
+            placeholder={Strings.SearchEvent}
+            placeholderTextColor={Colors.Gray}
+            value={searchText}
+            onChangeText={onSearch}
           />
-        ) : (
-          <View style={styles.noEventsContainer}>
-            <Text style={styles.noEventsTxt}>
-              {Strings.SoQuietHereRightNow}
-            </Text>
-            <Text numberOfLines={2} style={styles.noEvents}>
-              {Strings.noEvents}
-            </Text>
-          </View>
-        )}
-        <RBSheet ref={BottomSheetRef} closeOnDragDown={true} closeOnPressMask>
-          <SafeAreaView>
-            <Pressable style={styles.JoinEventContainer} onPress={onClose}>
-              <Text style={styles.headingStyle}>{Strings.EnterEventCode}</Text>
-              <CustomTextInput
-                placeholder={Strings.EnterEventCode}
-                value={invitationCode}
-                onChangeText={inviteCode => setInvitationCode(inviteCode)}
-                maxLength={6}
-                autoCapitalize={'words'}
-              />
-              <CustomButton
-                title={Strings.JoinEvent}
-                onPress={onJoinEvent}
-                btnStyle={styles.JoinEventBtn}
-              />
-            </Pressable>
-          </SafeAreaView>
-        </RBSheet>
 
-        {/* when tap on create event */}
-        <RBSheet
-          ref={EventBottomSheefRef}
-          closeOnDragDown={true}
-          closeOnPressMask
-          height={670}>
-          <SafeAreaView>
-            <View style={styles.EventOptionContainer} onPress={onEventClose}>
-              <View>
-                <View style={styles.mainEventOptionContainer}>
-                  <Text style={styles.eventOptionHeadingStyle}>
-                    {Strings.ChooseYourFunction}
-                  </Text>
-                </View>
-                <Pressable
-                  style={styles.taskManagerContainer}
-                  onPress={onTaskManagerPress('team')}>
-                  <Text style={styles.taskManagerTextStyle}>
-                    {Strings.TeamManager}
-                  </Text>
-                  <Text style={styles.subTextStyle}>
-                    {Strings.TeamManagerDesc}
-                  </Text>
-                  <View>
-                    <Text style={styles.taskManagerTextStyle}>
-                      {Strings.Select}
+          {listEvents?.length > 0 ? (
+            <FlatGrid
+              extraData={listEvents}
+              style={styles.gridContainer}
+              showsVerticalScrollIndicator={false}
+              maxItemsPerRow={3}
+              itemDimension={100}
+              data={listEvents ? listEvents : []}
+              keyExtractor={item => item?.id}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              renderItem={({item, index}) => {
+                return (
+                  <Pressable
+                    key={index}
+                    style={styles.listDetailView}
+                    onPress={onEventPress(item)}>
+                    <FastImageView
+                      defaultSource={Images.EventImagePlaceholder}
+                      uri={
+                        item.image
+                          ? `${ApiConstants.ImageBaseUrl}/${item.image}`
+                          : ''
+                      }
+                      style={styles.eventImage}
+                    />
+                    <Text style={styles.eventText} numberOfLines={1}>
+                      {item.eventName}
                     </Text>
-                  </View>
-                </Pressable>
-                <Pressable
-                  style={styles.taskManagerContainer}
-                  onPress={onTaskManagerPress('single')}>
-                  <Text style={styles.taskManagerTextStyle}>
-                    {Strings.SingleEvent}
-                  </Text>
-                  <Text style={styles.subTextStyle}>
-                    {Strings.SingleEventDesc}
-                  </Text>
-                  <View>
-                    <Text style={styles.taskManagerTextStyle}>
-                      {Strings.Select}
-                    </Text>
-                  </View>
-                </Pressable>
-              </View>
+                  </Pressable>
+                );
+              }}
+            />
+          ) : (
+            <View style={styles.noEventsContainer}>
+              <Text style={styles.noEventsTxt}>
+                {Strings.SoQuietHereRightNow}
+              </Text>
+              <Text numberOfLines={2} style={styles.noEvents}>
+                {Strings.noEvents}
+              </Text>
             </View>
-          </SafeAreaView>
-        </RBSheet>
+          )}
+          <RBSheet ref={BottomSheetRef} closeOnDragDown={true} closeOnPressMask>
+            <SafeAreaView>
+              <Pressable style={styles.JoinEventContainer} onPress={onClose}>
+                <Text style={styles.headingStyle}>
+                  {Strings.EnterEventCode}
+                </Text>
+                <CustomTextInput
+                  placeholder={Strings.EnterEventCode}
+                  value={invitationCode}
+                  onChangeText={inviteCode => setInvitationCode(inviteCode)}
+                  maxLength={6}
+                  autoCapitalize={'words'}
+                />
+                <CustomButton
+                  title={Strings.JoinEvent}
+                  onPress={onJoinEvent}
+                  btnStyle={styles.JoinEventBtn}
+                />
+              </Pressable>
+            </SafeAreaView>
+          </RBSheet>
 
-        <FloatingAction actions={actionsList} onPressItem={onFABPress} />
+          {/* when tap on create event */}
+          <RBSheet
+            ref={EventBottomSheefRef}
+            closeOnDragDown={true}
+            closeOnPressMask
+            height={550}>
+            <SafeAreaView>
+              <View style={styles.EventOptionContainer} onPress={onEventClose}>
+                <View>
+                  <View style={styles.mainEventOptionContainer}>
+                    <Text style={styles.eventOptionHeadingStyle}>
+                      {Strings.ChooseYourFunction}
+                    </Text>
+                  </View>
+                  <Pressable
+                    style={styles.taskManagerContainer}
+                    onPress={onTaskManagerPress('team')}>
+                    <Text style={styles.taskManagerTextStyle}>
+                      {Strings.TeamManager}
+                    </Text>
+                    <Text style={styles.subTextTitleStyle}>
+                      {Strings.TeamManagerDesc1}
+                    </Text>
+                    <Text style={styles.subTextDescStyle}>
+                      {Strings.TeamManagerDesc2}
+                    </Text>
+                    <View>
+                      <Text style={styles.taskManagerSelectTextStyle}>
+                        {Strings.Select}
+                      </Text>
+                    </View>
+                  </Pressable>
+                  <Pressable
+                    style={styles.taskManagerContainer}
+                    onPress={onTaskManagerPress('single')}>
+                    <Text style={styles.taskManagerTextStyle}>
+                      {Strings.SingleEvent}
+                    </Text>
+                    <Text style={styles.subTextTitleStyle}>
+                      {Strings.SingleEventDesc1}
+                    </Text>
+                    <Text style={styles.subTextDescStyle}>
+                      {Strings.SingleEventDesc2}
+                    </Text>
+                    <View>
+                      <Text style={styles.taskManagerSelectTextStyle}>
+                        {Strings.Select}
+                      </Text>
+                    </View>
+                  </Pressable>
+                </View>
+              </View>
+            </SafeAreaView>
+          </RBSheet>
+
+          <FloatingAction
+            actions={actionsList}
+            onPressItem={onFABPress}
+            floatingIcon={Icons.invitemLogo}
+            showBackground={true}
+            iconWidth={30}
+            iconHeight={30}
+            color="#1253bc"
+            position="right"
+            buttonSize={56}
+            distanceToEdge={20}
+          />
+        </ImageBackground>
       </View>
 
       <GoogleAdsComponent />

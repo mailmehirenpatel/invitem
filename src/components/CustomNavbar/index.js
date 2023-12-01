@@ -106,9 +106,9 @@ const CustomNavbar = ({
       );
     } else if (rightText) {
       return (
-        <Text style={styles.rightText} onPress={onRightAction}>
-          {rightText}
-        </Text>
+        <Pressable style={styles.rightTextButton} onPress={onRightAction}>
+          <Text style={styles.rightText}>{rightText}</Text>
+        </Pressable>
       );
     } else {
       return <View style={styles.emptyViewStyle} />;

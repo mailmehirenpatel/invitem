@@ -299,9 +299,11 @@ const AddLocation = ({navigation, route}) => {
                     returnKeyType={'next'}
                     keyboardType={'default'}
                     error={touched.locationName && errors.locationName}
+                    errorTextStyle={styles.errorTextStyle}
                     inputStyle={styles.inputStyle}
                     containerStyle={styles.inputContainer}
                     onChangeText={handleChange('locationName')}
+                    autoCapitalize={'words'}
                     onSubmitEditing={() => inputRef.address.current.focus()}
                   />
                   {/* Contect Number filed */}
@@ -334,6 +336,7 @@ const AddLocation = ({navigation, route}) => {
                     ]}
                     errorTextStyle={styles.errorTextStyle}
                     onChangeText={handleChange('address')}
+                    autoCapitalize={'words'}
                     onSubmitEditing={() => inputRef.city.current.focus()}
                   />
                   <CustomLabelTextInput
@@ -348,6 +351,7 @@ const AddLocation = ({navigation, route}) => {
                     containerStyle={styles.inputContainer}
                     errorTextStyle={styles.errorTextStyle}
                     onChangeText={handleChange('city')}
+                    autoCapitalize={'words'}
                     onSubmitEditing={() => inputRef.state.current.focus()}
                   />
                   <CustomLabelTextInput
@@ -362,6 +366,7 @@ const AddLocation = ({navigation, route}) => {
                     containerStyle={styles.inputContainer}
                     errorTextStyle={styles.errorTextStyle}
                     onChangeText={handleChange('state')}
+                    autoCapitalize={'words'}
                     onSubmitEditing={() => inputRef.country.current.focus()}
                   />
                   <CustomLabelTextInput
@@ -376,6 +381,7 @@ const AddLocation = ({navigation, route}) => {
                     containerStyle={styles.inputContainer}
                     errorTextStyle={styles.errorTextStyle}
                     onChangeText={handleChange('country')}
+                    autoCapitalize={'words'}
                     onSubmitEditing={() => Keyboard.dismiss()}
                   />
                 </View>

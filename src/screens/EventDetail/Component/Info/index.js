@@ -1,12 +1,20 @@
 // 3rd Party Imports
 import React, {createRef, useCallback, useRef} from 'react';
-import {Image, Linking, Pressable, ScrollView, Text, View} from 'react-native';
+import {
+  Image,
+  Linking,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  ImageBackground,
+} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {useSelector} from 'react-redux';
 
 // Local Imports
 import {FlatGrid} from 'react-native-super-grid';
-import {Icons} from '../../../../assets';
+import {Icons, Images} from '../../../../assets';
 import GoogleAdsComponent from '../../../../components/CustomGoogleAdd/GoogleAdsComponent';
 import MultiUserView from '../../../../components/MultiUserView';
 import {Strings} from '../../../../config/strings';
@@ -277,7 +285,7 @@ const EventInfo = ({navigation, route, eventObjectData}) => {
 
       case 'add checklist':
         return {
-          Name: 'Add CheckList',
+          Name: Strings.CheckList,
           color: '#0896A9',
           icon: Icons.checkListIcn,
           navigateTo: NavigationRoutes.EventCheckList,
@@ -285,7 +293,7 @@ const EventInfo = ({navigation, route, eventObjectData}) => {
 
       case 'add choicelist':
         return {
-          Name: 'Choice List',
+          Name: Strings.ChoiceList,
           color: '#A90825',
           icon: Icons.choiceListIcn,
           navigateTo: NavigationRoutes.EventChoiceList,
@@ -342,16 +350,22 @@ const EventInfo = ({navigation, route, eventObjectData}) => {
     <View style={styles.mainContentContainer}>
       <View style={styles.mainContentContainer}>
         <ScrollView style={styles.contentContainer}>
-          <FeatureOption
-            {...{EventInfoChirpsData, InfochirpsDetailsForUser, navigation}}
-          />
-          <EventDate {...{eventObjectData, options, navigation}} />
-          <EventGuests {...{navigation, eventObjectData}} />
-          <EventDetailView {...{eventObjectData, userId}} />
+          <ImageBackground
+            source={Images.InvitemBackgroundImg}
+            style={{flex: 1}}
+            resizeMode="cover">
+            <FeatureOption
+              {...{EventInfoChirpsData, InfochirpsDetailsForUser, navigation}}
+            />
+            <EventDate {...{eventObjectData, options, navigation}} />
+            <EventGuests {...{navigation, eventObjectData}} />
+            <EventDetailView {...{eventObjectData, userId}} />
 
-          <EventSetting {...{refRBSheet}} />
-          <EventMap {...{eventObjectData}} />
+            <EventSetting {...{refRBSheet}} />
+            <EventMap {...{eventObjectData}} />
+          </ImageBackground>
         </ScrollView>
+
         {/* <Pressable style={styles.btnSettingView} onPress={onOpenSetting}>
           <Image style={styles.btnSettingIcon} source={Icons.settingIcn} />
         </Pressable> */}

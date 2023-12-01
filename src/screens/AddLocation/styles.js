@@ -168,7 +168,9 @@ export default StyleSheet.create({
     paddingHorizontal: 0,
   },
   errorTextStyle: {
-    marginLeft: scale(10),
+    marginLeft: scale(5),
+    fontSize: fonts.size.s10,
+    fontSizeFocused: fonts.size.s8,
   },
   addressInput: {
     minHeight: verticalScale(60),

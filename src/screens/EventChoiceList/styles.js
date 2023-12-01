@@ -81,4 +81,13 @@ export default StyleSheet.create({
     borderRadius: 5,
     marginHorizontal: scale(20),
   },
+  inputNote: {
+    height: 40,
+    margin: 12,
+    borderWidth: 0,
+    padding: 10,
+    color: Colors.Black,
+    borderColor: Colors.Black,
+    marginHorizontal: scale(15),
+  },
 });

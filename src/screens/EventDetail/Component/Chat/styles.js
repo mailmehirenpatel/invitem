@@ -152,4 +152,7 @@ export default StyleSheet.create({
     borderRadius: 10,
     margin: moderateScale(5),
   },
+  toolbar: {
+    //borderRadius: 30,
+  },
 });

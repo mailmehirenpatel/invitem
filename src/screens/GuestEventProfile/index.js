@@ -60,8 +60,8 @@ const GuestEventProfile = ({navigation}) => {
   const HandleDeleteEvent = useCallback(() => {
     //console.log('delete event....');
     Alert.alert(
-      Strings.DeleteEventConfirmation,
-      eventObjectData?.name,
+      Strings.DeleteEventConfirmation1,
+      Strings.DeleteEventConfirmation2,
       [
         {
           text: Strings.No,

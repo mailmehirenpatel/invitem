@@ -110,7 +110,7 @@ export default function RsvpForm({navigation, route}) {
 
                 <View style={styles.rsvpTitleContainer}>
                   <Text style={styles.rsvpTitleName} numberOfLines={3}>
-                    {item.title}
+                    {Strings.RSVP} : {item.title}
                   </Text>
                   <Text style={styles.rsvpDate}>
                     {Strings.rsvpDate}

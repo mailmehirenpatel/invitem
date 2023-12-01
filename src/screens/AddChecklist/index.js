@@ -8,6 +8,8 @@ import {
   Text,
   TouchableOpacity,
   View,
+  TextInput,
+  ScrollView,
 } from 'react-native';
 
 // Local Imports
@@ -28,7 +30,7 @@ import styles from './styles';
 const AddCheckList = ({navigation, route}) => {
   const [checkListTitle, setCheckListTitle] = useState('');
   const [checkListOption, setCheckListOption] = useState('');
-  const [checkOptionList, setCheckOptionList] = useState([]);
+  const [checkOptionList, setCheckOptionList] = useState([0]);
   const [checkLists, setCheckLists] = useState([]);
   const dispatch = useDispatch();
   const {InfoChirpsId} = route.params || {};
@@ -38,6 +40,13 @@ const AddCheckList = ({navigation, route}) => {
   const CheckListInfochirpsId = EventInfoChirpsData?.find(
     i => i.name === 'add checklist',
   );
+
+  const setInputValue = (index, value) => {
+    const newArray = [...checkOptionList];
+    newArray[index] = value;
+    setCheckOptionList(newArray);
+    setCheckListOption('');
+  };
 
   /**get checklist infochirps data */
   useEffect(() => {
@@ -60,13 +69,18 @@ const AddCheckList = ({navigation, route}) => {
   }, [checkListOption]);
 
   const onSave = useCallback(() => {
+    const resCheckOptionList = checkOptionList.filter(element => {
+      return element !== null && element !== '' && element !== undefined;
+    });
+
     const AddCheckListRequestData = {
       id: 0,
       eventId: eventObjectData.id,
       infoChirpId: InfoChirpsId,
       title: checkListTitle,
-      itemJson: checkOptionList,
+      itemJson: resCheckOptionList,
     };
+
     if (checkListTitle === '') {
       ToastError(Strings.EmptyChecklistTitle);
     } else if (checkOptionList.length < 1) {
@@ -79,7 +93,7 @@ const AddCheckList = ({navigation, route}) => {
           (isSuccess, message) => {
             if (isSuccess) {
               setCheckListTitle('');
-              setCheckOptionList([]);
+              setCheckOptionList([0]);
               ToastSuccess(message);
               dispatch(getEventInfoChirps(eventObjectData.id));
               CheckListInfochirpsId &&
@@ -221,76 +235,56 @@ const AddCheckList = ({navigation, route}) => {
           <View style={styles.voteOptionView}>
             <View style={styles.voteOptionUpperView}>
               <Text style={styles.titleText}>{Strings.AddCheckList}</Text>
-
-              {checkListOption.length > 0 && (
-                <Pressable onPress={onAddOptionPress}>
-                  <Text style={styles.addMorePollOption}>
-                    {Strings.AddMoreList} +
-                  </Text>
-                </Pressable>
-              )}
             </View>
-
-            {checkOptionList && (
-              <FlatList
-                style={styles.optionFlatListStyle}
-                scrollEnabled={false}
-                data={checkOptionList}
-                keyExtractor={(item, index) => item + index}
-                renderItem={({item, index}) => {
-                  return (
-                    <View style={styles.optionListContainer} key={index}>
-                      <Text style={{color: Colors.logoBackgroundColor}}>
-                        {item}
-                      </Text>
-                      <View style={styles.deleteOptionList}>
-                        <TouchableOpacity
-                          onPress={() => {
-                            Alert.alert(
-                              Strings.DeletePollOptionConfirmationPoll,
-                              item.optionName,
-                              [
-                                {
-                                  text: Strings.No,
-                                  onPress: () => console.log('No Pressed'),
-                                  style: Strings.cancel,
+            <ScrollView contentContainerStyle={styles.container}>
+              {checkOptionList &&
+                checkOptionList.map((val, index) => (
+                  <View style={styles.optionListContainer} key={index}>
+                    <TextInput
+                      value={val}
+                      placeholder={Strings.AddListHere}
+                      autoCapitalize={'words'}
+                      returnKeyType={'done'}
+                      style={{color: Colors.logoBackgroundColor}}
+                      onChangeText={value => setInputValue(index, value)}
+                      onSubmitEditing={onAddOptionPress}
+                    />
+                    <View style={styles.deleteOptionList}>
+                      <TouchableOpacity
+                        onPress={() => {
+                          Alert.alert(
+                            Strings.DeletePollOptionConfirmationPoll,
+                            '' + val,
+                            [
+                              {
+                                text: Strings.No,
+                                onPress: () => console.log('No Pressed'),
+                                style: Strings.cancel,
+                              },
+                              {
+                                text: Strings.Yes,
+                                onPress: () => {
+                                  let NewOptionsList = checkOptionList.filter(
+                                    i => {
+                                      return i !== val;
+                                    },
+                                  );
+                                  setCheckOptionList(NewOptionsList);
                                 },
-                                {
-                                  text: Strings.Yes,
-                                  onPress: () => {
-                                    let NewOptionsList = checkOptionList.filter(
-                                      i => {
-                                        return i !== item;
-                                      },
-                                    );
-                                    setCheckOptionList(NewOptionsList);
-                                  },
-                                },
-                              ],
-                              {cancelable: false},
-                            );
-                          }}>
-                          <Image
-                            source={Icons.deleteIcon}
-                            style={styles.deleteIconStyle}
-                          />
-                        </TouchableOpacity>
-                      </View>
+                              },
+                            ],
+                            {cancelable: false},
+                          );
+                        }}>
+                        <Image
+                          source={Icons.deleteIcon}
+                          style={styles.deleteIconStyle}
+                        />
+                      </TouchableOpacity>
                     </View>
-                  );
-                }}
-              />
-            )}
-            <View style={styles.addPollOptionContainer}>
-              <CustomTextInput
-                value={checkListOption}
-                onChangeText={val => setCheckListOption(val)}
-                placeholder={Strings.AddListHere}
-                inputStyle={styles.textInputStyle}
-                containerStyle={styles.textInputContainerStyle}
-                autoCapitalize={'words'}
-              />
-            </View>
+                  </View>
+                ))}
+            </ScrollView>
           </View>
         </View>
         {checkLists.length > 0 ? (

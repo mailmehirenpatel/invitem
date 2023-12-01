@@ -4,12 +4,21 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   Alert,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   Text,
+  ImageBackground,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Actions, Avatar, Bubble, GiftedChat} from 'react-native-gifted-chat';
+import {
+  Actions,
+  Avatar,
+  Bubble,
+  GiftedChat,
+  InputToolbar,
+} from 'react-native-gifted-chat';
 import {useDispatch, useSelector} from 'react-redux';
 
 // Local Imports
@@ -38,11 +47,16 @@ const EventChat = ({navigation}) => {
   const [Connection, setConnection] = useState(null);
   const [UploadedImage, setUploadedImage] = useState('');
   const [customText, setCustomText] = useState('');
+  //const [composerHeight, setComposerHeight] = useState(44); // Initial height
 
   const dispatch = useDispatch();
 
-  const textInputRef = useRef();
-
+  //const textInputRef = useRef();
+  //const onContentSizeChange = (contentWidth, contentHeight) => {
+  // Adjust composer height based on contentHeight or any other logic
+  //console.log('render inputs ' + contentHeight);
+  //setComposerHeight(contentHeight < 44 ? 44 : contentHeight);
+  //};
   // connection for SignalR hub
   useEffect(() => {
     const connect = new HubConnectionBuilder()
@@ -66,6 +80,11 @@ const EventChat = ({navigation}) => {
     //   connect.stop();
     // };
   }, [dispatch, eventObjectData?.eventName, eventObjectData?.id, token]);
+
+  // function renderInputToolbar(props) {
+  //   console.log('render inputs ' + JSON.stringify(props));
+  //   return <InputToolbar {...props} containerStyle={styles.toolbar} />;
+  // }
 
   useEffect(() => {
     if (Connection) {
@@ -187,7 +206,7 @@ const EventChat = ({navigation}) => {
       let ChatRequestData = {
         id: eventObjectData.id,
         // content: messageToSend?.text,
-        content: messages,
+        content: messages.trim(),
         eventName: eventObjectData.eventName,
         eventId: eventObjectData?.id,
         image: UploadedImage,
@@ -196,7 +215,6 @@ const EventChat = ({navigation}) => {
       dispatch(
         SendMessage(ChatRequestData, (isSuccess, result) => {
           setUploadedImage('');
-          textInputRef.current.clear();
         }),
       );
     },
@@ -295,6 +313,7 @@ const EventChat = ({navigation}) => {
             onPress={() => {
               onSend(props?.text);
               setCustomText('');
+              //setComposerHeight(44);
             }}
             icon={Icons.sendArrow}
             iconStyle={styles.iconSend}
@@ -339,65 +358,75 @@ const EventChat = ({navigation}) => {
   }, [UploadedImage]);
 
   return (
-    <SafeAreaView style={styles.mainChatView}>
-      <GiftedChat
-        textInputRef={textInputRef}
-        text={customText}
-        onInputTextChanged={text => setCustomText(text)}
-        renderAvatar={data => {
-          return (
-            <Avatar
-              {...data}
-              renderAvatar={d => (
-                <TouchableOpacity
-                  onPress={() => {
-                    // console.log('user id -> ', data.currentMessage.user._id);
-                    navigation.navigate(NavigationRoutes.UserInfo, {
-                      USERid: data.currentMessage.user._id,
-                    });
-                  }}>
-                  <FastImageView
-                    uri={
-                      d.currentMessage.user.avatar
-                        ? `${ApiConstants.ImageBaseUrl}/${d.currentMessage.user.avatar}`
-                        : ''
-                    }
-                    style={styles.avatarStyle}
-                    defaultSource={Images.profileImage}
-                  />
-                </TouchableOpacity>
-              )}
-            />
-          );
-        }}
-        messages={ChatList.map(i => {
-          return {
-            ...i,
-            user: {
-              ...i.user,
-              avatar: i.user.avatar !== null ? i.user.avatar : '',
-            },
-            image: i.image && `${ApiConstants.ImageBaseUrl}/${i.image}`,
-          };
-        }).reverse()}
-        // onSend={messages => {
-        //   onSend(messages);
-        // }}
-        user={{
-          _id: userId,
-        }}
-        renderBubble={renderBubble}
-        alwaysShowSend
-        renderSend={renderSend}
-        renderActions={renderActions}
-        renderChatFooter={renderChatFooter}
-        showUserAvatar
-        renderUsernameOnMessage
-        imageStyle={styles.chatImageStyle}
-        onLongPress={onLongPress}
-        renderMessageImage={renderMessageImage}
-      />
-    </SafeAreaView>
+    <KeyboardAvoidingView
+      style={styles.mainChatView}
+      behavior={Platform.OS === 'android' ? 'height' : 'padding'}>
+      <ImageBackground
+        source={Images.InvitemBackgroundImg}
+        style={{flex: 1}}
+        resizeMode="cover">
+        <GiftedChat
+          text={customText}
+          onInputTextChanged={text => setCustomText(text)}
+          renderAvatar={data => {
+            return (
+              <Avatar
+                {...data}
+                renderAvatar={d => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      // console.log('user id -> ', data.currentMessage.user._id);
+                      navigation.navigate(NavigationRoutes.UserInfo, {
+                        USERid: data.currentMessage.user._id,
+                      });
+                    }}>
+                    <FastImageView
+                      uri={
+                        d.currentMessage.user.avatar
+                          ? `${ApiConstants.ImageBaseUrl}/${d.currentMessage.user.avatar}`
+                          : ''
+                      }
+                      style={styles.avatarStyle}
+                      defaultSource={Images.profileImage}
+                    />
+                  </TouchableOpacity>
+                )}
+              />
+            );
+          }}
+          messages={ChatList.map(i => {
+            return {
+              ...i,
+              user: {
+                ...i.user,
+                avatar: i.user.avatar !== null ? i.user.avatar : '',
+              },
+              image: i.image && `${ApiConstants.ImageBaseUrl}/${i.image}`,
+            };
+          }).reverse()}
+          // onSend={messages => {
+          //   onSend(messages);
+          // }}
+          user={{
+            _id: userId,
+          }}
+          renderBubble={renderBubble}
+          alwaysShowSend
+          renderSend={renderSend}
+          //renderInputToolbar={renderInputToolbar}
+          //minComposerHeight={44} // Minimum height of the composer
+          //maxComposerHeight={composerHeight} // Maximum height of the composer
+          //onContentSizeChange={onContentSizeChange} // Handle content size change
+          renderActions={renderActions}
+          renderChatFooter={renderChatFooter}
+          showUserAvatar
+          renderUsernameOnMessage
+          imageStyle={styles.chatImageStyle}
+          onLongPress={onLongPress}
+          renderMessageImage={renderMessageImage}
+        />
+      </ImageBackground>
+    </KeyboardAvoidingView>
   );
 };
 export default EventChat;

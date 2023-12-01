@@ -4,5 +4,6 @@ const Images = {
   image_warning: require('./warning.png'),
   profileImage: require('./ProfileImage.png'),
   EventImagePlaceholder: require('./eventImagePlaceholder.jpeg'),
+  InvitemBackgroundImg: require('./InvitemBackground.png'),
 };
 export default Images;

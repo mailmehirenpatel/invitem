@@ -87,5 +87,6 @@ const Icons = {
   privacyAndPolicyIcon: require('./Privacy-Policy-icon.png'),
   checkIcon: require('./check.png'),
   closeIcon: require('./close.png'),
+  invitemLogo: require('./invitem.png'),
 };
 export default Icons;

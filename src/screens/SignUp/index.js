@@ -2,7 +2,7 @@
 import CheckBox from '@react-native-community/checkbox';
 import {Formik} from 'formik';
 import React, {createRef, useCallback, useState} from 'react';
-import {Image, Linking, Pressable, Text, View} from 'react-native';
+import {Alert, Image, Linking, Pressable, Text, View} from 'react-native';
 import {CountryPicker} from 'react-native-country-codes-picker';
 import Toast from 'react-native-simple-toast';
 import {useDispatch} from 'react-redux';
@@ -81,7 +81,21 @@ const SignUp = ({navigation}) => {
                   requestVerifyEmail(email, isVerify => {
                     if (isVerify) {
                       ToastSuccess(Strings.VerifyEmail);
-                      navigation.navigate(NavigationRoutes.Login);
+                      Alert.alert(
+                        Strings.signUpNewAccountMessage1,
+                        Strings.signUpNewAccountMessage2,
+                        [
+                          {
+                            text: Strings.Ok,
+                            onPress: () => {
+                              //console.log('No Pressed');
+                              navigation.navigate(NavigationRoutes.Login);
+                            },
+                            style: Strings.Ok,
+                          },
+                        ],
+                        {cancelable: false},
+                      );
                     }
                   }),
                 );

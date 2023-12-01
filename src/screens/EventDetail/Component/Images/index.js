@@ -1,6 +1,13 @@
 // 3rd Party Imports
 import React, {useCallback, useState} from 'react';
-import {FlatList, Pressable, Text, View, RefreshControl} from 'react-native';
+import {
+  FlatList,
+  Pressable,
+  Text,
+  View,
+  RefreshControl,
+  ImageBackground,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 
 // Local Imports
@@ -39,37 +46,43 @@ const EventImage = ({eventObjectData}) => {
 
   return (
     <View style={styles.mainContainer}>
-      {imageData?.length !== 0 ? (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          style={styles.gridContainer}
-          numColumns={2}
-          data={imageData}
-          keyExtractor={item => item?.id}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          renderItem={({item, index}) => (
-            <Pressable
-              key={index}
-              style={styles.eventImageView}
-              onPress={onImageSelection(item)}>
-              <FastImageView
-                style={styles.eventImage}
-                defaultSource={Images.EventImagePlaceholder}
-                uri={
-                  item.image ? `${ApiConstants.ImageBaseUrl}/${item.image}` : ''
-                }
-              />
-            </Pressable>
-          )}
-        />
-      ) : (
-        <View style={styles.NoImgFoundView}>
-          <Text style={styles.NoImgFoundTxt}>{Strings.NOImgFound}</Text>
-        </View>
-      )}
-
+      <ImageBackground
+        source={Images.InvitemBackgroundImg}
+        style={{flex: 1}}
+        resizeMode="cover">
+        {imageData?.length !== 0 ? (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            style={styles.gridContainer}
+            numColumns={2}
+            data={imageData}
+            keyExtractor={item => item?.id}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            renderItem={({item, index}) => (
+              <Pressable
+                key={index}
+                style={styles.eventImageView}
+                onPress={onImageSelection(item)}>
+                <FastImageView
+                  style={styles.eventImage}
+                  defaultSource={Images.EventImagePlaceholder}
+                  uri={
+                    item.image
+                      ? `${ApiConstants.ImageBaseUrl}/${item.image}`
+                      : ''
+                  }
+                />
+              </Pressable>
+            )}
+          />
+        ) : (
+          <View style={styles.NoImgFoundView}>
+            <Text style={styles.NoImgFoundTxt}>{Strings.NOImgFound}</Text>
+          </View>
+        )}
+      </ImageBackground>
       <EventImagePopup {...{isModalVisible, setModalVisible, selectedEvent}} />
       <GoogleAdsComponent />
     </View>

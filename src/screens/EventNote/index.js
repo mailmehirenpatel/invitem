@@ -1,6 +1,6 @@
 // 3rd Party Imports
 import React, {useEffect, useState} from 'react';
-import {FlatList, Text, View} from 'react-native';
+import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import {useDispatch} from 'react-redux';
 
 // Local Imports
@@ -10,6 +10,8 @@ import GoogleAdsComponent from '../../components/CustomGoogleAdd/GoogleAdsCompon
 import {Strings} from '../../config/strings';
 import {getEventNoteInfoChirps} from '../../store/actions/InfoChirpsAction';
 import styles from './styles';
+import Clipboard from '@react-native-community/clipboard';
+import {ToastSuccess} from '../../constants/ToastConstants';
 
 const EventNote = ({navigation, route}) => {
   const {InfoChirpsDetails} = route.params;
@@ -50,9 +52,17 @@ const EventNote = ({navigation, route}) => {
               <Text style={styles.eventNoteDataTitle}>
                 {Strings.Description} :
               </Text>
-              <Text style={styles.eventNoteDataDescription}>
-                {item.description}
-              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  Clipboard.setString(item.description);
+                  ToastSuccess(Strings.copied);
+                }}>
+                <View>
+                  <Text style={styles.eventNoteDataDescription}>
+                    {item.description}
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
           )}
           keyExtractor={item => item.id.toString()}
