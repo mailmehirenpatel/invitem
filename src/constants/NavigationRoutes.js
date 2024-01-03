@@ -56,6 +56,7 @@ const NavigationRoutes = {
   EventScheduleList: 'Event Schedule List',
   UpdateEventScheduleList: 'Update Event Schedule List',
   AddEventSchedule: 'Add Event Schedule',
+  CreateRsvp: 'Create RSVP',
 };
 
 export default NavigationRoutes;

@@ -46,6 +46,7 @@ import {onMute} from '../../store/slice/eventSlice';
 import Colors from '../../theme/Colors';
 import {actionsList} from '../../utils';
 import styles from './styles';
+import fonts from '../../config/fonts';
 
 const EventScreen = ({navigation}) => {
   // Global Event screen Field References
@@ -148,7 +149,10 @@ const EventScreen = ({navigation}) => {
                     getEventInfoChirps(item.id, isSuccess3 => {
                       if (isSuccess3) {
                         loaderRef.current.hide();
-                        navigation.navigate(NavigationRoutes.EventDetail);
+                        navigation.navigate(NavigationRoutes.EventDetail, {
+                          notificationDataId: null,
+                          isFromNotification: false,
+                        });
                       }
                     }),
                   );
@@ -285,6 +289,24 @@ const EventScreen = ({navigation}) => {
                     <Text style={styles.eventText} numberOfLines={1}>
                       {item.eventName}
                     </Text>
+                    {item?.notificationCount > 0 && (
+                      <View style={styles.notificationCountView}>
+                        <Text
+                          style={[
+                            styles.notificationCountText,
+                            {
+                              fontSize:
+                                item?.notificationCount > 99
+                                  ? fonts.size.s12
+                                  : fonts.size.s16,
+                            },
+                          ]}>
+                          {item?.notificationCount > 99
+                            ? '99+'
+                            : item?.notificationCount}
+                        </Text>
+                      </View>
+                    )}
                   </Pressable>
                 );
               }}
@@ -326,7 +348,7 @@ const EventScreen = ({navigation}) => {
             ref={EventBottomSheefRef}
             closeOnDragDown={true}
             closeOnPressMask
-            height={550}>
+            height={580}>
             <SafeAreaView>
               <View style={styles.EventOptionContainer} onPress={onEventClose}>
                 <View>

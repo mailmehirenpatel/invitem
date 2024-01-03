@@ -231,8 +231,12 @@ const AddUser = ({navigation, route}) => {
     <View style={styles.mainEventContainer}>
       <CustomNavbar
         leftIcon={Icons.backArrowIcon}
-        title={Strings.AddUser}
-        rightText={Strings.Save}
+        title={
+          eventObjectData?.isMultipleEvent
+            ? Strings.AddMember
+            : Strings.AddGuest
+        }
+        rightText={isUpdate ? Strings.Add : Strings.Next}
         onRightAction={onSave}
       />
       <KeyboardAwareScrollView

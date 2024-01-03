@@ -60,4 +60,19 @@ export default StyleSheet.create({
     tintColor: Colors.Black,
     resizeMode: 'contain',
   },
+  createdUserView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  createdProfileImage: {
+    width: scale(30),
+    height: scale(30),
+    borderRadius: scale(50),
+    resizeMode: 'stretch',
+  },
+  checkIcon: {
+    height: scale(15),
+    width: scale(15),
+  },
 });

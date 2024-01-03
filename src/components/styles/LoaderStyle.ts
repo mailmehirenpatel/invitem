@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: verticalScale(80),
     width: scale(80),
-    backgroundColor: Colors.logoBackgroundColor,
+    backgroundColor: Colors.White,
   },
 });
 export default styles;

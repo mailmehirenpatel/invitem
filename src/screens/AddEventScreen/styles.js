@@ -56,6 +56,7 @@ export default StyleSheet.create({
   scheduleContainer: {marginVertical: verticalScale(10)},
   btnContainerStyle: {
     marginHorizontal: scale(25),
+    marginTop: verticalScale(20),
     marginBottom: verticalScale(20),
   },
 

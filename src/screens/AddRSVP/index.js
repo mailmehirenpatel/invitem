@@ -43,7 +43,9 @@ const AddRSVP = ({route}) => {
   const [SelectedTime, setTime] = useState(moment().format('HH:mm:ss'));
   const [RsvpList, setRsvpList] = useState([]);
 
-  const rsvpInfochirpsId = EventInfoChirpsData.find(i => i.name === 'add rsvp');
+  const rsvpInfochirpsId = EventInfoChirpsData?.find(
+    i => i?.name === 'add rsvp',
+  );
 
   useEffect(() => {
     rsvpInfochirpsId &&
@@ -265,7 +267,7 @@ const AddRSVP = ({route}) => {
                 </Text>
                 <Text style={styles.rsvpDataTitle}>
                   {Strings.RSVPTime}{' '}
-                  <Text style={styles.rsvpDate}>
+                  <Text style={styles.RSVPDataDescription}>
                     {moment(item.rsvpDate).format(
                       AppConstants.TimeFormats.HourMinutesSecond,
                     )}

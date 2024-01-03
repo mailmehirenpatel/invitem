@@ -6,6 +6,7 @@ import RNFetchBlob from 'react-native-blob-util';
 import DocumentPicker, {types} from 'react-native-document-picker';
 import Geolocation from 'react-native-geolocation-service';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import DeviceInfo from 'react-native-device-info';
 
 // Local Imports
 import {Icons} from '../assets';
@@ -308,6 +309,8 @@ export const onDownload = url => async () => {
     }
   }
 };
+
+export const isIPhoneX = () => DeviceInfo.getModel() === 'iPhone X';
 
 //for floating action button item list
 export const actionsList = [

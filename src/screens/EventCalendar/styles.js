@@ -17,10 +17,10 @@ export default StyleSheet.create({
   },
   contentContainer: {
     flex: 1,
-    backgroundColor: Colors.LightBlueBackground,
+    backgroundColor: Colors.Transparent,
   },
   scrollView: {
-    backgroundColor: Colors.LightBlueBackground,
+    backgroundColor: Colors.Transparent,
   },
   mainView: {
     marginHorizontal: scale(20),
@@ -39,7 +39,12 @@ export default StyleSheet.create({
     marginTop: verticalScale(10),
     paddingVertical: verticalScale(5),
     alignItems: 'center',
+    justifyContent: 'space-between',
     borderRadius: 10,
+  },
+  imgAndDetailView: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   calendarIconViewStyle: {
     height: scale(30),
@@ -76,5 +81,22 @@ export default StyleSheet.create({
       Platform.OS === 'android'
         ? Metrics.screenHeight - 230
         : Metrics.screenHeight - 200,
+  },
+  emptyDataViewText: {
+    fontSize: fonts.size.s15,
+    textAlign: 'center',
+    color: Colors.DarkGreen,
+    fontFamily: fonts.type.RobotoSerifRegular,
+    fontWeight: fonts.weight.w500,
+  },
+  eventConfirmationView: {
+    alignItems: 'center',
+  },
+  eventStatusText: {
+    fontFamily: fonts.type.LatoRegular,
+    fontWeight: fonts.weight.w300,
+    fontSize: fonts.size.s12,
+    color: Colors.DarkGreen,
+    paddingHorizontal: scale(10),
   },
 });

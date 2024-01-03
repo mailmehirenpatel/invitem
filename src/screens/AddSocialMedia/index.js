@@ -36,8 +36,8 @@ const AddSocialMedia = ({route, navigation}) => {
 
   const dispatch = useDispatch();
 
-  const socialMediaInfochirpsId = EventInfoChirpsData.find(
-    i => i.name === 'add social media',
+  const socialMediaInfochirpsId = EventInfoChirpsData?.find(
+    i => i?.name === 'add social media',
   );
   const get_SM_Url = (list, title) => {
     return list.filter(i => {
@@ -50,7 +50,7 @@ const AddSocialMedia = ({route, navigation}) => {
       dispatch(
         getSocialMediaInfoChirps(
           eventObjectData.id,
-          socialMediaInfochirpsId.id,
+          socialMediaInfochirpsId?.id,
           result => {
             result && setFacebookLink(get_SM_Url(result, 'Facebook'));
             result && setInstagramLink(get_SM_Url(result, 'Instagram'));
@@ -59,7 +59,7 @@ const AddSocialMedia = ({route, navigation}) => {
           },
         ),
       );
-  }, [dispatch, eventObjectData.id, socialMediaInfochirpsId]);
+  }, [dispatch, eventObjectData?.id, socialMediaInfochirpsId]);
 
   // OnSave Action
   const onSave = useCallback(() => {

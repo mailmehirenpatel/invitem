@@ -1,5 +1,11 @@
 // 3rd Party Imports
-import React, {createRef, useCallback, useRef} from 'react';
+import React, {
+  createRef,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Image,
   Linking,
@@ -10,7 +16,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 // Local Imports
 import {FlatGrid} from 'react-native-super-grid';
@@ -19,9 +25,10 @@ import GoogleAdsComponent from '../../../../components/CustomGoogleAdd/GoogleAds
 import MultiUserView from '../../../../components/MultiUserView';
 import {Strings} from '../../../../config/strings';
 import NavigationRoutes from '../../../../constants/NavigationRoutes';
-import Colors from '../../../../theme/Colors';
 import EventSetting from '../EventSetting';
 import styles from './styles';
+import {RSVPPopup} from '../../../../components';
+import {getEventRSVPInfoChirps} from '../../../../store/actions/InfoChirpsAction';
 
 // Render Event Map View
 const EventMap = ({eventObjectData}) => {
@@ -83,53 +90,7 @@ const EventMap = ({eventObjectData}) => {
 const EventDate = ({eventObjectData, options, navigation}) => {
   return (
     <View style={styles.eventDateView}>
-      {eventObjectData?.isMultipleEvent === false ? (
-        <>
-          <View style={styles.dateLabelView}>
-            <Text style={styles.dateLabelText}>{Strings.startDate}</Text>
-            <View style={styles.dateRightView}>
-              <Text style={styles.dateLabelText}>{Strings.EventStartTime}</Text>
-            </View>
-          </View>
-          <View style={styles.dateValueView}>
-            <Text style={styles.dateValueText}>
-              {new Date(eventObjectData?.startDate).toDateString()}
-            </Text>
-
-            <View style={styles.dateRightView}>
-              <Text style={styles.dateValueText}>
-                {eventObjectData?.eventDateSchedule[0]?.startTime}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.dateLabelView}>
-            <Text style={styles.dateLabelText}>{Strings.endDate}</Text>
-            <View style={styles.dateRightView}>
-              <Text style={styles.dateLabelText}>{Strings.endTime}</Text>
-            </View>
-          </View>
-          <View style={styles.dateValueView}>
-            <Text style={styles.dateValueText}>
-              {new Date(eventObjectData?.endDate).toDateString()}
-            </Text>
-
-            <View style={styles.dateRightView}>
-              <Text style={styles.dateValueText}>
-                {eventObjectData?.eventDateSchedule[0]?.endTime}
-              </Text>
-            </View>
-          </View>
-        </>
-      ) : (
-        ''
-      )}
-
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}>
+      <View style={styles.eventScheduleViewAllStyle}>
         <Text>Event Schedule</Text>
         <Text
           onPress={() => {
@@ -138,7 +99,7 @@ const EventDate = ({eventObjectData, options, navigation}) => {
             });
           }}
           style={styles.viewAllTxtStyle}>
-          View All
+          Event RSVP Schedule
         </Text>
       </View>
     </View>
@@ -148,25 +109,20 @@ const EventDate = ({eventObjectData, options, navigation}) => {
 // Render Event Detail View
 const EventDetailView = ({eventObjectData, userId}) => (
   <View style={styles.eventDetailView}>
-    {/* <View style={styles.detailRow}>
-      <Text style={styles.detailLabelText}>{`${Strings.Website} : `}</Text>
-      <Text style={styles.detailValueText}>{'www.chirpem.com'}</Text>
-    </View> */}
     <View style={styles.detailRow}>
-      {userId === eventObjectData?.userId && (
-        <>
-          <Text
-            style={styles.detailLabelText}>{`${Strings.EventType} : `}</Text>
-          <Text style={styles.detailValueText}>
-            {eventObjectData?.categoryName}
-          </Text>
-        </>
-      )}
+      <Text style={styles.detailLabelText}>{`${Strings.EventType} : `}</Text>
+      <Text style={styles.detailValueText}>
+        {eventObjectData?.categoryName}
+      </Text>
     </View>
-    <View style={styles.detailRow}>
-      <Text style={styles.detailLabelText}>{`${Strings.EventInfo} : `}</Text>
-    </View>
-    <Text style={styles.detailText}>{eventObjectData?.description}</Text>
+    {Object?.keys(eventObjectData?.description)?.length > 0 && (
+      <View style={styles.detailRow}>
+        <Text style={styles.detailLabelText}>{`${Strings.EventInfo} : `}</Text>
+        <Text style={styles.detailText}>
+          {eventObjectData?.description?.trim()}
+        </Text>
+      </View>
+    )}
   </View>
 );
 
@@ -208,6 +164,9 @@ const FeatureOption = ({
   EventInfoChirpsData,
   InfochirpsDetailsForUser,
   navigation,
+  setViewRSVPPopup,
+  setRsvpData,
+  rsvpList,
 }) => (
   <View style={styles.optionRowContainer}>
     {EventInfoChirpsData?.length !== 0 ? (
@@ -218,31 +177,43 @@ const FeatureOption = ({
         itemDimension={0}
         data={EventInfoChirpsData ? EventInfoChirpsData : []}
         keyExtractor={item => item?.infoChirpId.toString()}
-        renderItem={({item, index}) => (
-          <Pressable
-            key={index}
-            style={styles.optionView}
-            onPress={() => {
-              InfochirpsDetailsForUser(item.name).navigateTo &&
-                navigation.navigate(
-                  InfochirpsDetailsForUser(item.name).navigateTo,
-                  {InfoChirpsDetails: item},
-                );
-            }}>
-            <Image
-              source={InfochirpsDetailsForUser(item.name).icon}
-              style={styles.optionIcn}
-            />
-
-            <Text
-              style={[
-                styles.optionText,
-                {color: InfochirpsDetailsForUser(item.name).color},
-              ]}>
-              {InfochirpsDetailsForUser(item.name).Name}
-            </Text>
-          </Pressable>
-        )}
+        renderItem={({item, index}) => {
+          item?.displayName === Strings.RSVP && setRsvpData(item);
+          return (
+            <Pressable
+              key={index}
+              style={styles.optionView}
+              onPress={() => {
+                item?.displayName === Strings.RSVP
+                  ? setViewRSVPPopup(true)
+                  : InfochirpsDetailsForUser(item.name).navigateTo &&
+                    navigation.navigate(
+                      InfochirpsDetailsForUser(item.name).navigateTo,
+                      {InfoChirpsDetails: item},
+                    );
+              }}>
+              <Image
+                source={InfochirpsDetailsForUser(item.name).icon}
+                style={styles.optionIcn}
+              />
+              {item?.displayName === Strings.RSVP &&
+                item?.unAttendedRsvpCount > 0 && (
+                  <View style={styles.notificationCountView}>
+                    <Text style={styles.notificationCountText}>
+                      {item?.unAttendedRsvpCount}
+                    </Text>
+                  </View>
+                )}
+              <Text
+                style={[
+                  styles.optionText,
+                  {color: InfochirpsDetailsForUser(item.name).color},
+                ]}>
+                {InfochirpsDetailsForUser(item.name).Name}
+              </Text>
+            </Pressable>
+          );
+        }}
       />
     ) : (
       <Text style={styles.emptyDataText}>{Strings.NoInfoChirpsAdded}</Text>
@@ -256,7 +227,17 @@ const EventInfo = ({navigation, route, eventObjectData}) => {
   // const {eventObjectData} = useSelector(state => state.event); // get event data through id
   const {EventInfoChirpsData} = useSelector(state => state.infoChirps); // get event data through id
   const options = {hour: 'numeric', minute: 'numeric'};
-
+  const [isViewRSVPPopup, setViewRSVPPopup] = useState();
+  const [rsvpData, setRsvpData] = useState();
+  const [rsvpList, setRSVPList] = useState();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(
+      getEventRSVPInfoChirps(rsvpData?.eventId, rsvpData?.id, result => {
+        result && setRSVPList(result);
+      }),
+    );
+  }, [dispatch, rsvpData]);
   const InfochirpsDetailsForUser = name => {
     switch (name) {
       case 'create note':
@@ -346,6 +327,19 @@ const EventInfo = ({navigation, route, eventObjectData}) => {
   };
 
   const onOpenSetting = useCallback(() => refRBSheet.current.open(), []); // BottomSheet Open Functionality
+  const onViewPress = useCallback(
+    id => {
+      setViewRSVPPopup(false);
+      InfochirpsDetailsForUser(rsvpData?.name).navigateTo &&
+        navigation.navigate(
+          InfochirpsDetailsForUser(rsvpData?.name).navigateTo,
+          {
+            InfoChirpsDetails: rsvpList?.filter(e => e?.rsvpId === id),
+          },
+        );
+    },
+    [navigation, rsvpData?.name, rsvpList],
+  );
   return (
     <View style={styles.mainContentContainer}>
       <View style={styles.mainContentContainer}>
@@ -355,7 +349,14 @@ const EventInfo = ({navigation, route, eventObjectData}) => {
             style={{flex: 1}}
             resizeMode="cover">
             <FeatureOption
-              {...{EventInfoChirpsData, InfochirpsDetailsForUser, navigation}}
+              {...{
+                EventInfoChirpsData,
+                InfochirpsDetailsForUser,
+                navigation,
+                setViewRSVPPopup,
+                setRsvpData,
+                rsvpList,
+              }}
             />
             <EventDate {...{eventObjectData, options, navigation}} />
             <EventGuests {...{navigation, eventObjectData}} />
@@ -365,7 +366,13 @@ const EventInfo = ({navigation, route, eventObjectData}) => {
             <EventMap {...{eventObjectData}} />
           </ImageBackground>
         </ScrollView>
-
+        {isViewRSVPPopup && (
+          <RSVPPopup
+            isVisible={isViewRSVPPopup}
+            data={rsvpList}
+            onView={onViewPress}
+          />
+        )}
         {/* <Pressable style={styles.btnSettingView} onPress={onOpenSetting}>
           <Image style={styles.btnSettingIcon} source={Icons.settingIcn} />
         </Pressable> */}

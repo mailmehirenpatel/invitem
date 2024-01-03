@@ -65,6 +65,9 @@ const DashboardNavigator = ({userMpin}) => {
     </DashboardStack.Navigator>
   );
 };
+
+export const navigationRef = React.createRef();
+
 const App = () => {
   // Value Get Through Use Selector
   const isLogin = useSelector(state => state.auth.isLogin);
@@ -100,7 +103,7 @@ const App = () => {
     isLogin?.validTo,
   ]);
   return (
-    <NavigationContainer theme={currentTheme}>
+    <NavigationContainer theme={currentTheme} ref={navigationRef}>
       <StatusBar backgroundColor={Colors.White} barStyle={'dark-content'} />
       {!isLogin ? (
         <AuthNavigator />

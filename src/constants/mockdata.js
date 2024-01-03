@@ -35,6 +35,78 @@ const weekDays = [
   },
 ];
 
+const eventStatusData = [
+  {
+    id: 1,
+    name: 'Confirm',
+    color: Colors.YellowText,
+  },
+  {
+    id: 2,
+    name: 'Accepted',
+    color: Colors.Green,
+  },
+  {
+    id: 153,
+    name: 'Declined',
+    color: Colors.Red,
+  },
+  {
+    id: 189,
+    name: 'Host',
+    color: Colors.DottedBorder,
+  },
+];
+const recurringData = [
+  {
+    id: 0,
+    name: 'Every day',
+  },
+  {
+    id: 1,
+    name: 'Every week',
+  },
+  {
+    id: 2,
+    name: 'Every 2 weeks',
+  },
+  {
+    id: 3,
+    name: 'Every month',
+  },
+];
+const stopRecurringData = [
+  {
+    id: 1,
+    name: 'Never',
+  },
+  {
+    id: 2,
+    name: 'Ask me',
+  },
+];
+const answerDeadlineData = [
+  {
+    id: 0,
+    day: '1 day before',
+  },
+  {
+    id: 1,
+    day: '2 days before',
+  },
+  {
+    id: 2,
+    day: '7 days before',
+  },
+  {
+    id: 3,
+    day: '14 days before',
+  },
+  {
+    id: 4,
+    day: 'month before',
+  },
+];
 const AdminInfoData = [
   {
     id: 1,
@@ -814,4 +886,8 @@ export {
   guestEventProfileNotifications,
   addMultipleLocation,
   weekDays,
+  eventStatusData,
+  recurringData,
+  stopRecurringData,
+  answerDeadlineData,
 };

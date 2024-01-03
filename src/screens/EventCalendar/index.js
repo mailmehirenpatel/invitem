@@ -1,10 +1,17 @@
 // 3rd Party Imports
 import React, {useCallback, useEffect} from 'react';
-import {FlatList, Pressable, ScrollView, Text, View} from 'react-native';
+import {
+  FlatList,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+  ImageBackground,
+} from 'react-native';
 
 // Local Imports
 import {useDispatch, useSelector} from 'react-redux';
-import {Icons} from '../../assets';
+import {Icons, Images} from '../../assets';
 import {CircleFilledIcon, CustomNavbar} from '../../components';
 import GoogleAdsComponent from '../../components/CustomGoogleAdd/GoogleAdsComponent';
 import {loaderRef} from '../../components/Loader';
@@ -19,6 +26,7 @@ import {getEventInfoChirps} from '../../store/actions/InfoChirpsAction';
 import {onMute} from '../../store/slice/eventSlice';
 import styles from './styles';
 import fonts from '../../config/fonts';
+import {eventStatusData} from '../../constants/mockdata';
 
 const UpcomingEvents = ({navigation}) => {
   // For future use
@@ -68,22 +76,36 @@ const UpcomingEvents = ({navigation}) => {
           style={styles.flatDetailView}
           key={index}
           onPress={onEventPress(item)}>
-          <CircleFilledIcon
-            icon={Icons.CalendarIcn}
-            iconStyle={styles.calendarIcon}
-            containerStyle={styles.calendarIconViewStyle}
-          />
-          <View>
-            <Text style={styles.scheduleText}>{item.eventName}</Text>
-            <Text style={styles.scheduleText}>
-              {Strings.EventDate}: {new Date(item?.eventDate).toDateString()}
-            </Text>
-            <Text style={styles.scheduleTimeText}>
-              {Strings.EventStartTime}: {item.startTime}
-            </Text>
-            <Text style={styles.scheduleTimeText}>
-              {Strings.EventEndTime}: {item.endTime}
-            </Text>
+          <View style={styles.imgAndDetailView}>
+            <CircleFilledIcon
+              icon={Icons.CalendarIcn}
+              iconStyle={styles.calendarIcon}
+              containerStyle={styles.calendarIconViewStyle}
+            />
+            <View>
+              <Text style={styles.scheduleText}>{item.eventName}</Text>
+              <Text style={styles.scheduleText}>RSVP title</Text>
+              <Text style={styles.scheduleText}>
+                {Strings.EventDate}: {new Date(item?.eventDate).toDateString()}
+              </Text>
+              <Text style={styles.scheduleTimeText}>
+                {Strings.EventStartTime}: {item.startTime}
+              </Text>
+              <Text style={styles.scheduleTimeText}>
+                {Strings.EventEndTime}: {item.endTime}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.eventConfirmationView}>
+            {eventStatusData?.map(es => {
+              return (
+                es?.id === item?.categoryId && (
+                  <Text style={[styles.eventStatusText, {color: es?.color}]}>
+                    RSVP Status {es?.name}
+                  </Text>
+                )
+              );
+            })}
           </View>
         </Pressable>
       );
@@ -148,35 +170,34 @@ const UpcomingEvents = ({navigation}) => {
         title={Strings.UpcomingEvents}
         leftIcon={Icons.backArrowIcon}
       />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.scrollView}>
-        <View style={styles.contentContainer}>
-          <View style={styles.mainView}>
-            {upcomingEventData?.length > 0 ? (
-              <FlatList
-                // ListHeaderComponent={renderCalendar} // Future Use
-                scrollEnabled={false}
-                data={upcomingEventData}
-                keyExtractor={item => item?.eventId}
-                renderItem={renderItem}
-              />
-            ) : (
-              <View style={styles.emptyDataView}>
-                <Text
-                  style={{
-                    fontSize: fonts.size.s15,
-                    textAlign: 'center',
-                    fontFamily: fonts.type.RobotoSerifRegular,
-                    fontWeight: fonts.weight.w500,
-                  }}>
-                  {Strings.NoUpcomingEventFound}
-                </Text>
-              </View>
-            )}
+      <ImageBackground
+        source={Images.InvitemBackgroundImg}
+        style={{flex: 1}}
+        resizeMode="cover">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.scrollView}>
+          <View style={styles.contentContainer}>
+            <View style={styles.mainView}>
+              {upcomingEventData?.length > 0 ? (
+                <FlatList
+                  // ListHeaderComponent={renderCalendar} // Future Use
+                  scrollEnabled={false}
+                  data={upcomingEventData}
+                  keyExtractor={item => item?.eventId}
+                  renderItem={renderItem}
+                />
+              ) : (
+                <View style={styles.emptyDataView}>
+                  <Text style={styles.emptyDataViewText}>
+                    {Strings.NoUpcomingEventFound}
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </ImageBackground>
       <GoogleAdsComponent />
     </View>
   );

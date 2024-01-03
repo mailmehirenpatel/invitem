@@ -30,6 +30,7 @@ import {uploadMediaRequest} from '../../store/actions/profileActions';
 import Colors from '../../theme/Colors';
 import {imageSelection} from '../../utils';
 import styles from './styles';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const AddChoiceList = ({route}) => {
   const [choiceListTitle, setChoiceListTitle] = useState('');
@@ -39,7 +40,8 @@ const AddChoiceList = ({route}) => {
   const {InfoChirpsId} = route.params || {};
   const {eventObjectData} = useSelector(state => state.event);
   const [listChoices, setListChoices] = useState([]);
-
+  // State to track whether the action has been performed
+  const [actionPerformed, setActionPerformed] = useState([]);
   const {EventInfoChirpsData} = useSelector(state => state.infoChirps);
 
   const ChoiceListInfochirpsId = EventInfoChirpsData.find(
@@ -51,6 +53,18 @@ const AddChoiceList = ({route}) => {
     newArray[index] = value;
     setChoiceListOptionList(newArray);
     setChoiceListOptions('');
+
+    if (!actionPerformed[index] && value.length === 1) {
+      // Perform your action here
+      //console.log('Action performed with the first character:', value);
+
+      // Update state to track that the action has been performed
+      onAddOptionPress();
+      const actionPerformedArray = [...actionPerformed];
+      actionPerformedArray[index] = true;
+      setActionPerformed(actionPerformedArray);
+      //setActionPerformed(true);
+    }
   };
 
   const dispatch = useDispatch();
@@ -123,6 +137,7 @@ const AddChoiceList = ({route}) => {
               setChoiceListTitle('');
               setChoiceListOptionList([0]);
               setSelectedFile('');
+              setActionPerformed([]);
               ToastSuccess(message);
               dispatch(getEventInfoChirps(eventObjectData.id));
               ChoiceListInfochirpsId &&
@@ -238,115 +253,122 @@ const AddChoiceList = ({route}) => {
     [ChoiceListInfochirpsId, dispatch, eventObjectData.id],
   );
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <CustomNavbar
         title={Strings.AddChoiceList}
         leftIcon={Icons.backArrowIcon}
         rightText={Strings.Save}
         onRightAction={onSave}
       />
-      <View style={styles.contentContainer}>
-        <View style={styles.mainView}>
-          <View style={styles.choiceOptionView}>
-            <View>
-              <Text style={styles.titleText}>{Strings.ChoiceTitle}</Text>
-              <CustomTextInput
-                value={choiceListTitle}
-                onChangeText={val => setChoiceListTitle(val)}
-                placeholder={Strings.choiceListTitle}
-                inputStyle={styles.textInputStyle}
-                containerStyle={styles.textInputContainerStyle}
-                autoCapitalize={'words'}
-              />
-            </View>
-            <View>
-              <View style={styles.choiceOptionContainer}>
-                <Text style={styles.titleText}>
-                  {Strings.choiceListOptions}
-                </Text>
+      <KeyboardAwareScrollView
+        bounces={false}
+        showsVerticalScrollIndicator={false}
+        enableAutomaticScroll={true}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled">
+        <View style={styles.contentContainer}>
+          <View style={styles.mainView}>
+            <View style={styles.choiceOptionView}>
+              <View>
+                <Text style={styles.titleText}>{Strings.ChoiceTitle}</Text>
+                <CustomTextInput
+                  value={choiceListTitle}
+                  onChangeText={val => setChoiceListTitle(val)}
+                  placeholder={Strings.TitleHere}
+                  inputStyle={styles.textInputStyle}
+                  containerStyle={styles.textInputContainerStyle}
+                  autoCapitalize={'words'}
+                />
               </View>
-              <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                {choiceListOptionList &&
-                  choiceListOptionList.map((item, index) => (
-                    <View style={styles.optionListContainer} key={index}>
-                      <TextInput
-                        value={item}
-                        placeholder={Strings.AddListHere}
-                        autoCapitalize={'words'}
-                        returnKeyType={'done'}
-                        style={{color: Colors.logoBackgroundColor}}
-                        onChangeText={value => setInputValue(index, value)}
-                        onSubmitEditing={onAddOptionPress}
-                      />
-                      <TouchableOpacity
-                        onPress={() => {
-                          Alert.alert(
-                            Strings.DeletePollOptionConfirmationPoll,
-                            item,
-                            [
-                              {
-                                text: Strings.No,
-                                onPress: () => console.log('No Pressed'),
-                                style: Strings.cancel,
-                              },
-                              {
-                                text: Strings.Yes,
-                                onPress: () => {
-                                  let NewOptionsList =
-                                    choiceListOptionList.filter(i => {
-                                      return i !== item;
-                                    });
-                                  setChoiceListOptionList(NewOptionsList);
-                                },
-                              },
-                            ],
-                            {cancelable: false},
-                          );
-                        }}>
-                        <Image
-                          source={Icons.deleteIcon}
-                          style={styles.deleteIconStyle}
+              <View>
+                <View style={styles.choiceOptionContainer}>
+                  <Text style={styles.titleText}>
+                    {Strings.choiceListOptions}
+                  </Text>
+                </View>
+                <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+                  {choiceListOptionList &&
+                    choiceListOptionList.map((item, index) => (
+                      <View style={styles.optionListContainer} key={index}>
+                        <TextInput
+                          value={item}
+                          placeholder={Strings.AddChoiceList}
+                          autoCapitalize={'words'}
+                          returnKeyType={'done'}
+                          style={{color: Colors.logoBackgroundColor}}
+                          onChangeText={value => setInputValue(index, value)}
+                          //onSubmitEditing={onAddOptionPress}
                         />
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-              </ScrollView>
+                        <TouchableOpacity
+                          onPress={() => {
+                            Alert.alert(
+                              Strings.DeletePollOptionConfirmationPoll,
+                              item,
+                              [
+                                {
+                                  text: Strings.No,
+                                  onPress: () => console.log('No Pressed'),
+                                  style: Strings.cancel,
+                                },
+                                {
+                                  text: Strings.Yes,
+                                  onPress: () => {
+                                    let NewOptionsList =
+                                      choiceListOptionList.filter(i => {
+                                        return i !== item;
+                                      });
+                                    setChoiceListOptionList(NewOptionsList);
+                                  },
+                                },
+                              ],
+                              {cancelable: false},
+                            );
+                          }}>
+                          <Image
+                            source={Icons.deleteIcon}
+                            style={styles.deleteIconStyle}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    ))}
+                </ScrollView>
+              </View>
+            </View>
+            <View>
+              {selectedFile && (
+                <FastImageView
+                  style={styles.selectedPollImage}
+                  defaultSource={Images.EventImagePlaceholder}
+                  uri={
+                    choiceListOptionList
+                      ? `${ApiConstants.ImageBaseUrl}/${selectedFile}`
+                      : ''
+                  }
+                />
+              )}
+              <Pressable
+                style={styles.multiImagesBrowseContainer}
+                onPress={onBrowse}>
+                <Image style={styles.uploadIcon} source={Icons.uploadFile} />
+                <Text style={styles.uploadFilesText}>
+                  {Strings.UploadYourFilesHere}
+                </Text>
+                <Text style={styles.browseText}>{Strings.Browse}</Text>
+              </Pressable>
             </View>
           </View>
-          <View>
-            {selectedFile && (
-              <FastImageView
-                style={styles.selectedPollImage}
-                defaultSource={Images.EventImagePlaceholder}
-                uri={
-                  choiceListOptionList
-                    ? `${ApiConstants.ImageBaseUrl}/${selectedFile}`
-                    : ''
-                }
-              />
-            )}
-            <Pressable
-              style={styles.multiImagesBrowseContainer}
-              onPress={onBrowse}>
-              <Image style={styles.uploadIcon} source={Icons.uploadFile} />
-              <Text style={styles.uploadFilesText}>
-                {Strings.UploadYourFilesHere}
-              </Text>
-              <Text style={styles.browseText}>{Strings.Browse}</Text>
-            </Pressable>
-          </View>
-        </View>
 
-        {listChoices.length > 0 ? (
-          <FlatList
-            scrollEnabled={false}
-            data={listChoices}
-            keyExtractor={(item, index) => item + index}
-            renderItem={renderChoiceList}
-          />
-        ) : null}
-      </View>
-    </ScrollView>
+          {listChoices.length > 0 ? (
+            <FlatList
+              scrollEnabled={false}
+              data={listChoices}
+              keyExtractor={(item, index) => item + index}
+              renderItem={renderChoiceList}
+            />
+          ) : null}
+        </View>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 

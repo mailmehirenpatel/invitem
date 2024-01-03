@@ -1,5 +1,5 @@
 // 3rd Party Imports
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Platform} from 'react-native';
 
 // LOCAL IMPORTS
 import fonts from '../../../../config/fonts';
@@ -85,7 +85,7 @@ export default StyleSheet.create({
   },
   sendContainer: {
     justifyContent: 'center',
-    height: '100%',
+    //height: '100%',
     marginRight: scale(10),
   },
   sendBtnContainer: {
@@ -154,5 +154,41 @@ export default StyleSheet.create({
   },
   toolbar: {
     //borderRadius: 30,
+    paddingBottom: Platform.OS === 'android' ? 0 : verticalScale(12),
+  },
+  modalSafeView: {
+    flex: 1,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  modalImage: {
+    width: '95%',
+    height: '95%',
+    borderRadius: 8,
+    borderWidth: 2,
+    resizeMode: 'center',
+    borderColor: Colors.BorderColor,
+    backgroundColor: Colors.TransparentBlack,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: Platform.select({
+      android: 40,
+      ios: 35,
+    }),
+    right: 7,
+    padding: 5,
+    margin: 5,
+    backgroundColor: Colors.logoBackgroundColor,
+    borderRadius: 5,
+  },
+  closeIcon: {
+    height: scale(25),
+    width: scale(25),
+    resizeMode: 'contain',
+    tintColor: Colors.White,
   },
 });

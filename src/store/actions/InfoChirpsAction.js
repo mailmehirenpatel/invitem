@@ -491,3 +491,16 @@ export const deleteCheckListInfoChirps = (CheckListId, callBack) => {
       });
   };
 };
+
+// api call for update CheckList option
+export const updateCheckListOption = (data, callBack) => {
+  return async () => {
+    await apiPut(ApiConstants.updateChecklistOptionUrl, data)
+      .then(response => {
+        callBack && callBack(response?.data?.result, response?.data?.message);
+      })
+      .catch(err => {
+        console.log('update checkList option data Api Err => ', err);
+      });
+  };
+};

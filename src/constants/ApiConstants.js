@@ -40,6 +40,8 @@ const ApiConstants = {
   joinEventUrl: '/event/join-event',
   upcomingEventUrl: 'event/upcommingevents',
   getEventSchedule: 'event/eventschedule',
+  sendNotificationEventParticipantsUrl:
+    '/event/send-notification-event-participants',
 
   //InfoChirps Urls
   infoChirpsUrl: 'info-chirps',
@@ -59,12 +61,13 @@ const ApiConstants = {
   AddCheckListInfoChirpsUrl: 'event-info-chirps/add-checklist',
   AddChoiceListInfoChirpsUrl: 'event-info-chirps/choicelist',
   responseChoiceListInfoChirpsUrl: '/event-choicelist-response',
+  updateChecklistOptionUrl: '/event-info-chirps/update-checklist-option',
   //Media Upload Urls
   mediaUploadUrl: '/media/upload',
 
   // Push Notification Urls
   pushNotificationUrl: 'push-notification/notifications-config',
-
+  readChatMessagesUrl: '/push-notification/read-chat-notification',
   //chat
   ChatSend: 'chat/send',
   getChat: 'chat/get-message-by-eventId',

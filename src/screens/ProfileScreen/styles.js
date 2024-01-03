@@ -137,6 +137,7 @@ export default StyleSheet.create({
     fontWeight: fonts.weight.w400,
     fontFamily: fonts.type.RobotoSerifRegular,
     color: Colors.DarkGreen,
+    paddingLeft: 15,
     textAlignVertical: 'top',
     marginTop: Platform.OS === 'android' ? verticalScale(0) : verticalScale(5),
   },

@@ -14,6 +14,7 @@ import {CountryPicker} from 'react-native-country-codes-picker';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Toast from 'react-native-simple-toast';
 import {useDispatch, useSelector} from 'react-redux';
+import {useFocusEffect} from '@react-navigation/native';
 import ApiConstants from '../../constants/ApiConstants';
 
 // LOCAL IMPORTS
@@ -43,6 +44,7 @@ import {
 } from '../../store/actions/profileActions';
 import Colors from '../../theme/Colors';
 import styles from './styles';
+import updateSoftInputMode from '../../hooks/updateSoftInputMode';
 
 // Global Profile Screen Field References
 const inputRef = {
@@ -72,6 +74,15 @@ const ProfileScreen = ({navigation}) => {
     profileData ? profileData?.isHideContactDetails : false,
   );
   const dispatch = useDispatch();
+  const {enableAdjustPan, disableAdjustPan} = updateSoftInputMode();
+
+  useFocusEffect(
+    useCallback(() => {
+      enableAdjustPan();
+      return () => disableAdjustPan();
+    }, [disableAdjustPan, enableAdjustPan]),
+  );
+
   const onPressAddSocialMedia = useCallback(() => {
     if (linkOption && !WEBSITELINK_REGEX.exec(linkOption)) {
       ToastError(Strings.invalidWebsiteLink);
@@ -97,7 +108,7 @@ const ProfileScreen = ({navigation}) => {
   const redirectToWeb = useCallback(
     url => () => {
       return new Promise((resolve, reject) => {
-        Linking.openURL(`https://${url}`)
+        Linking.openURL(url)
           .then(data => {
             resolve(data);
           })
@@ -360,7 +371,7 @@ const ProfileScreen = ({navigation}) => {
                         placeholderTextColor={Colors.PlaceholderLight}
                         onChangeText={handleChange('bio')}
                         multiline
-                        value={values.bio.trimStart()}
+                        value={values.bio}
                         editable={isEdit}
                         scrollEnabled={false}
                         inputMode="text"

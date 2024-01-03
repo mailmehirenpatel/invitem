@@ -12,11 +12,13 @@ import {infoTabDescription} from '../../constants/mockdata';
 import {getInfoChirpsData} from '../../store/actions/InfoChirpsAction';
 import {styles} from './styles';
 import {scale, verticalScale} from '../../config/metrics';
+import {sendNotificationEventParticipantsByEventId} from '../../store/actions/EventAction';
+import {ToastSuccess} from '../../constants/ToastConstants';
 
 export default function AdminInfo({navigation, route}) {
   const {isUpdate} = route.params || {};
   const dispatch = useDispatch();
-
+  const {eventObjectData} = useSelector(state => state.event);
   const {infoChirpsData} = useSelector(state => state.infoChirps);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -109,7 +111,13 @@ export default function AdminInfo({navigation, route}) {
           iconTintColor: '#11C782',
           iconBackground: 'rgba(17, 199, 130, 0.2)',
         };
-
+      case 'create rsvp':
+        return {
+          navigationScreenName: NavigationRoutes.CreateRsvp,
+          icons: Icons.inviteUserIcn,
+          iconTintColor: '#F26942',
+          iconBackground: 'rgba(242, 105, 66, 0.2)',
+        };
       default:
         break;
     }
@@ -119,6 +127,38 @@ export default function AdminInfo({navigation, route}) {
   const handleTooltipVisibility = useCallback(() => {
     setIsToolTip(!isToolTip);
   }, [isToolTip]);
+  const onInviteMPress = useCallback(() => {
+    dispatch(
+      sendNotificationEventParticipantsByEventId(
+        eventObjectData?.id,
+        (isSuccess, message, result) => {
+          if (isSuccess) {
+            if (result) {
+              ToastSuccess(message);
+              navigation.reset({
+                index: 0,
+                routes: [{name: NavigationRoutes.EventScreen}],
+              });
+            }
+          }
+        },
+      ),
+    );
+  }, [dispatch, eventObjectData?.id, navigation]);
+
+  const onCreateRsvpPress = useCallback(() => {
+    const infoChirpId = parseInt(
+      infoChirpsData
+        ?.filter(e => e?.name === 'add rsvp')
+        ?.map(e => e?.id)
+        ?.toString(),
+      10,
+    );
+    navigation.navigate(InfochirpsDetails('create rsvp').navigationScreenName, {
+      InfoChirpsId: infoChirpId,
+    });
+  }, [infoChirpsData, navigation]);
+
   return (
     <View style={styles.mainContainer}>
       <CustomNavbar
@@ -135,14 +175,26 @@ export default function AdminInfo({navigation, route}) {
               });
         }}
       />
+      <CustomButton
+        title={Strings.pleaseAddEventRSVP}
+        onPress={onCreateRsvpPress}
+        btnStyle={styles.createRsvpBtn}
+      />
+      <Text style={styles.nowAddTeamAndEventDetails}>
+        {eventObjectData?.isMultipleEvent
+          ? Strings.nowAddTeamDetails
+          : Strings.nowAddEventDetails}
+      </Text>
+
       {isToolTip ? (
         <View style={styles.infoTabDescriptionView}>
           <Image source={Icons.tipIcon} style={styles.tipIconStyle} />
-          <Text style={styles.infoTabDescriptionViewText} numberOfLines={5}>
+          <Text style={styles.infoTabDescriptionViewText}>
             {infoTabDescription.description}
           </Text>
         </View>
       ) : null}
+
       <ScrollView>
         <View style={styles.adminInfoMainView}>
           <FlatList
@@ -153,7 +205,7 @@ export default function AdminInfo({navigation, route}) {
                 onPress={() => {
                   navigation.navigate(
                     InfochirpsDetails(item.name).navigationScreenName,
-                    {InfoChirpsId: item.id},
+                    {InfoChirpsId: item?.id},
                   );
                   // item.screen ? navigation.navigate(item.screen) : ToastInDevelopment();
                 }}>
@@ -187,12 +239,7 @@ export default function AdminInfo({navigation, route}) {
       {!isUpdate && (
         <CustomButton
           title={Strings.GoToDashBoard}
-          onPress={() => {
-            navigation.reset({
-              index: 0,
-              routes: [{name: NavigationRoutes.EventScreen}],
-            });
-          }}
+          onPress={onInviteMPress}
           btnStyle={{
             marginBottom: verticalScale(20),
             marginHorizontal: scale(20),

@@ -39,7 +39,8 @@ export const styles = StyleSheet.create({
   },
   rsvpTitleContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
+    alignItems: 'center',
   },
   contentContainer: {
     backgroundColor: Colors.LightBlueBackground,
@@ -57,6 +58,7 @@ export const styles = StyleSheet.create({
     fontSize: fonts.size.s15,
     fontFamily: fonts.type.RobotoSerifBold,
     fontWeight: fonts.weight.w400,
+    flex: 1,
   },
   rsvpDate: {
     color: Colors.White,
@@ -64,6 +66,7 @@ export const styles = StyleSheet.create({
     fontFamily: fonts.type.RobotoSerifBold,
     fontWeight: fonts.weight.w400,
     alignSelf: 'flex-end',
+    flex: 0.65,
   },
   rsvpDetailsContainer: {
     paddingHorizontal: scale(10),

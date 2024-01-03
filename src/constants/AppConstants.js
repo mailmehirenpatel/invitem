@@ -8,6 +8,7 @@ const AppConstants = {
     Day_Month_Year: 'DD MMMM YYYY',
     DayDateMonthYear: 'dddd, DD MMMM YYYY',
     TimeDate: 'HH:mm A, ddd Do MMMM YYYY',
+    DayMonthYearTime: 'DD.MM.YYYY - hh:mm a',
   },
   TimeFormats: {
     HourMinutesAntiMeridian: 'H:mm a',

@@ -22,7 +22,10 @@ const Loader = () => {
     <Modal visible={isVisible} transparent={true}>
       <View style={styles.modalView}>
         <View style={styles.modalSubView}>
-          <ActivityIndicator size={'large'} color={Colors.White} />
+          <ActivityIndicator
+            size={'large'}
+            color={Colors.logoBackgroundColor}
+          />
         </View>
       </View>
     </Modal>

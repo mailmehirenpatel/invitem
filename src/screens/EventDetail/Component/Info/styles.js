@@ -120,7 +120,6 @@ export default StyleSheet.create({
   },
   detailRow: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   detailLabelText: {
     fontFamily: fonts.type.RobotoSerifRegular,
@@ -139,6 +138,7 @@ export default StyleSheet.create({
     fontSize: fonts.size.s13,
     fontWeight: fonts.weight.w400,
     color: Colors.DarkGreen,
+    width: '75%',
   },
   optionRowContainer: {
     flexDirection: 'row',
@@ -200,10 +200,35 @@ export default StyleSheet.create({
     fontSize: fonts.size.s13,
     fontWeight: fonts.weight.w700,
     color: Colors.PlaceholderLight,
+    //height: scale(50),
+    padding: scale(15),
+    justifyContent: 'center',
   },
   viewAllTxtStyle: {
     color: Colors.BlueColor,
     textDecorationLine: 'underline',
     marginRight: scale(30),
+  },
+  eventScheduleViewAllStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  notificationCountView: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: verticalScale(20),
+    width: scale(20),
+    backgroundColor: Colors.Red,
+    borderRadius: 20,
+    position: 'absolute',
+    right: 35,
+    top: 15,
+  },
+  notificationCountText: {
+    fontSize: fonts.size.s16,
+    fontWeight: fonts.weight.w700,
+    fontFamily: fonts.type.RobotoSerifSemiBold,
+    color: Colors.White,
   },
 });

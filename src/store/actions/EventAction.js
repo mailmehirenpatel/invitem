@@ -259,3 +259,22 @@ export const deleteEventSchedule = (scheduleId, callBack) => {
       });
   };
 };
+
+// Api call for send-notification-event-participants
+export const sendNotificationEventParticipantsByEventId = (
+  eventId,
+  callBack,
+) => {
+  return async () => {
+    await apiPost(
+      `${ApiConstants.sendNotificationEventParticipantsUrl}?eventId=${eventId}`,
+      eventId,
+    )
+      .then(response => {
+        callBack(response?.ok, response?.data?.message, response?.data?.result); // CallBack Function Call
+      })
+      .catch(err => {
+        console.log('send-notification-event-participants Api Err => ', err);
+      });
+  };
+};

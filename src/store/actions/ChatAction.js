@@ -1,5 +1,5 @@
 import ApiConstants from '../../constants/ApiConstants';
-import {apiDelete, apiGet, apiPost} from '../../services/apiServices';
+import {apiDelete, apiGet, apiPost, apiPut} from '../../services/apiServices';
 import {onImageData} from '../slice/chatSlice';
 
 // get Chat send API
@@ -50,6 +50,19 @@ export const getImageByEventId = (EventId, callBack) => {
       })
       .catch(err => {
         console.log('get image by eventId Err => ', err);
+      });
+  };
+};
+
+//  read Chat Messages get
+export const readChatMessagesByEventId = (eventId, callBack) => {
+  return async dispatch => {
+    await apiPut(`${ApiConstants.readChatMessagesUrl}/${eventId}`)
+      .then(response => {
+        callBack && callBack(response?.result);
+      })
+      .catch(err => {
+        console.log('read Chat Messages by eventId Err => ', err);
       });
   };
 };

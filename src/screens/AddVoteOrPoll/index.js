@@ -37,6 +37,7 @@ import {uploadMediaRequest} from '../../store/actions/profileActions';
 import Colors from '../../theme/Colors';
 import {imageSelection} from '../../utils';
 import styles from './styles';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 const AddVoteOrPoll = ({route}) => {
   const {eventObjectData} = useSelector(state => state.event);
@@ -51,6 +52,9 @@ const AddVoteOrPoll = ({route}) => {
   const [VoteSelectedImage, setVoteSelectedImage] = useState('');
   const [voteOption, setVoteOption] = useState('');
 
+  // State to track whether the action has been performed
+  const [actionPerformed, setActionPerformed] = useState([]);
+
   const {InfoChirpsId} = route.params || {};
   const {EventInfoChirpsData} = useSelector(state => state.infoChirps);
   const [listPolls, setlistPolls] = useState([]);
@@ -59,6 +63,7 @@ const AddVoteOrPoll = ({route}) => {
     i => i.name === 'add vote or poll',
   );
   const dispatch = useDispatch();
+
   useEffect(() => {
     PollInfochirpsId &&
       dispatch(
@@ -74,6 +79,18 @@ const AddVoteOrPoll = ({route}) => {
     setVoteOptionsList(newArray);
     setVoteOption('');
     setVoteSelectedImage('');
+
+    if (!actionPerformed[index] && value.length === 1) {
+      // Perform your action here
+      //console.log('Action performed with the first character:', value);
+
+      // Update state to track that the action has been performed
+      onAddOptionPress();
+      const actionPerformedArray = [...actionPerformed];
+      actionPerformedArray[index] = true;
+      setActionPerformed(actionPerformedArray);
+      //setActionPerformed(true);
+    }
   };
 
   // Add Button Polls
@@ -135,6 +152,7 @@ const AddVoteOrPoll = ({route}) => {
             setVoteOptionsList([0]);
             setVoteSelectedImage('');
             setVoteOptionsImageList(['']);
+            setActionPerformed([]);
             ToastSuccess(message);
             dispatch(getEventInfoChirps(eventObjectData.id));
             PollInfochirpsId &&
@@ -260,7 +278,12 @@ const AddVoteOrPoll = ({route}) => {
         onRightAction={onSave}
       />
 
-      <ScrollView>
+      <KeyboardAwareScrollView
+        bounces={false}
+        showsVerticalScrollIndicator={false}
+        enableAutomaticScroll={true}
+        enableOnAndroid={true}
+        keyboardShouldPersistTaps="handled">
         <View style={styles.mainView}>
           <View style={styles.voteTitleView}>
             <Text style={styles.titleText}>{Strings.VoteTitle}</Text>
@@ -320,7 +343,7 @@ const AddVoteOrPoll = ({route}) => {
                       placeholder={Strings.VoteOptionHere}
                       inputStyle={styles.textInputStyle}
                       containerStyle={styles.textInputContainerStyle}
-                      onSubmitEditing={onAddOptionPress}
+                      //onSubmitEditing={onAddOptionPress}
                       autoCapitalize={'words'}
                     />
                     <View style={styles.deleteOptionList}>
@@ -347,7 +370,7 @@ const AddVoteOrPoll = ({route}) => {
                                   onPress: () => {
                                     let NewOptionsList = VoteOptionsList.filter(
                                       i => {
-                                        console.log(i + ' and ' + item);
+                                        //console.log(i + ' and ' + item);
                                         return i !== item;
                                       },
                                     );
@@ -380,7 +403,7 @@ const AddVoteOrPoll = ({route}) => {
             renderItem={renderListPoll}
           />
         ) : null}
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </View>
   );
 };

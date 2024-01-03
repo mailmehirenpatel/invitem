@@ -14,7 +14,7 @@ import CustomDropDown from './CustomDropDown';
 import ErrorPopup from './ErrorPopup';
 import SuccessPopup from './SuccessPopup';
 import FastImageView from './FastImageView';
-
+import RSVPPopup from './RSVPPopup';
 // Export
 export {
   CustomButton,
@@ -32,4 +32,5 @@ export {
   ErrorPopup,
   SuccessPopup,
   FastImageView,
+  RSVPPopup,
 };

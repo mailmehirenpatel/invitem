@@ -11,6 +11,7 @@ import {
   ImageBackground,
   TouchableOpacity,
   View,
+  Modal,
 } from 'react-native';
 import {
   Actions,
@@ -33,11 +34,13 @@ import {
   SendMessage,
   deleteChat,
   getChat,
+  readChatMessagesByEventId,
 } from '../../../../store/actions/ChatAction';
 import {uploadMediaRequest} from '../../../../store/actions/profileActions';
 import Colors from '../../../../theme/Colors';
-import {imageSelection} from '../../../../utils';
+import {imageSelection, isIPhoneX} from '../../../../utils';
 import styles from './styles';
+import {Metrics} from '../../../../config/metrics';
 
 const EventChat = ({navigation}) => {
   const {eventObjectData} = useSelector(state => state.event);
@@ -48,8 +51,14 @@ const EventChat = ({navigation}) => {
   const [UploadedImage, setUploadedImage] = useState('');
   const [customText, setCustomText] = useState('');
   //const [composerHeight, setComposerHeight] = useState(44); // Initial height
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [isImagePreview, setImagePreview] = useState(false);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(readChatMessagesByEventId(eventObjectData?.id));
+  }, [dispatch, eventObjectData?.id]);
 
   //const textInputRef = useRef();
   //const onContentSizeChange = (contentWidth, contentHeight) => {
@@ -81,10 +90,14 @@ const EventChat = ({navigation}) => {
     // };
   }, [dispatch, eventObjectData?.eventName, eventObjectData?.id, token]);
 
-  // function renderInputToolbar(props) {
-  //   console.log('render inputs ' + JSON.stringify(props));
-  //   return <InputToolbar {...props} containerStyle={styles.toolbar} />;
-  // }
+  function renderInputToolbar(props) {
+    return (
+      <InputToolbar
+        {...props}
+        containerStyle={Platform.OS === 'android' ? '' : styles.toolbar}
+      />
+    );
+  }
 
   useEffect(() => {
     if (Connection) {
@@ -136,7 +149,7 @@ const EventChat = ({navigation}) => {
             backgroundColor: Colors.BTNLiteGreen,
           },
           left: {
-            backgroundColor: Colors.White,
+            backgroundColor: Colors.bubblesGrey,
           },
         }}
         textStyle={{
@@ -144,7 +157,7 @@ const EventChat = ({navigation}) => {
             color: Colors.White,
           },
           left: {
-            color: Colors.Black,
+            color: Colors.White,
           },
         }}
       />
@@ -258,6 +271,12 @@ const EventChat = ({navigation}) => {
     [dispatch, eventObjectData.id],
   );
 
+  const handleImagePress = imageUrl => {
+    //console.log('Open image:', imageUrl);
+    setImagePreview(true);
+    setSelectedImage(imageUrl);
+  };
+
   const renderMessageImage = props => {
     const {currentMessage} = props;
     const handleDeleteImage = () => {
@@ -296,7 +315,9 @@ const EventChat = ({navigation}) => {
     };
 
     return (
-      <TouchableOpacity onLongPress={handleDeleteImage}>
+      <TouchableOpacity
+        onPress={() => handleImagePress(currentMessage.image)}
+        onLongPress={handleDeleteImage}>
         <Image
           source={{uri: currentMessage.image}}
           style={styles.chatImageStyle}
@@ -360,7 +381,8 @@ const EventChat = ({navigation}) => {
   return (
     <KeyboardAvoidingView
       style={styles.mainChatView}
-      behavior={Platform.OS === 'android' ? 'height' : 'padding'}>
+      backgroundColor={Colors.White}
+      behavior={Platform.OS === 'ios' ? 'padding' : ''}>
       <ImageBackground
         source={Images.InvitemBackgroundImg}
         style={{flex: 1}}
@@ -413,11 +435,18 @@ const EventChat = ({navigation}) => {
           renderBubble={renderBubble}
           alwaysShowSend
           renderSend={renderSend}
-          //renderInputToolbar={renderInputToolbar}
+          renderInputToolbar={renderInputToolbar}
           //minComposerHeight={44} // Minimum height of the composer
           //maxComposerHeight={composerHeight} // Maximum height of the composer
           //onContentSizeChange={onContentSizeChange} // Handle content size change
           renderActions={renderActions}
+          bottomOffset={
+            Platform.OS === 'ios'
+              ? isIPhoneX()
+                ? Metrics.screenHeight * 0.16
+                : Metrics.screenHeight * 0.19
+              : 0
+          }
           renderChatFooter={renderChatFooter}
           showUserAvatar
           renderUsernameOnMessage
@@ -426,6 +455,21 @@ const EventChat = ({navigation}) => {
           renderMessageImage={renderMessageImage}
         />
       </ImageBackground>
+
+      {isImagePreview && (
+        <Modal visible={isImagePreview} transparent>
+          <SafeAreaView style={styles.modalSafeView}>
+            <View style={styles.modalContainer}>
+              <Image source={{uri: selectedImage}} style={styles.modalImage} />
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setImagePreview(false)}>
+                <Image source={Icons.closeIcon} style={styles.closeIcon} />
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </Modal>
+      )}
     </KeyboardAvoidingView>
   );
 };

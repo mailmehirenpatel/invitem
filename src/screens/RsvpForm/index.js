@@ -1,5 +1,5 @@
 // 3rd Party Imports
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 
 // Local Imports
@@ -14,22 +14,21 @@ import {Strings} from '../../config/strings';
 import AppConstants from '../../constants/AppConstants';
 import NavigationRoutes from '../../constants/NavigationRoutes';
 import {ToastSuccess} from '../../constants/ToastConstants';
-import {
-  getEventRSVPInfoChirps,
-  responseEventRSVPInfoChirps,
-} from '../../store/actions/InfoChirpsAction';
+import {responseEventRSVPInfoChirps} from '../../store/actions/InfoChirpsAction';
 import Colors from '../../theme/Colors';
 import {styles} from './styles';
 import moment from 'moment';
 export default function RsvpForm({navigation, route}) {
+  const {InfoChirpsDetails} = route?.params;
   // Value Through AppConstants File
   const {Attend, UnAttend} = AppConstants.RsvpTabs;
 
   // const [Comment, setComment] = useState('');
 
-  const [RSVPList, setRSVPList] = useState([]);
+  const [RSVPList, setRSVPList] = useState(InfoChirpsDetails);
   const [SelectedObject, setSelectedObject] = useState({});
-  const {eventObjectData} = useSelector(state => state.event);
+  const dispatch = useDispatch();
+  // const {eventObjectData} = useSelector(state => state.event);
   // Navigate To Other Screen ̦and Value Pass Through Navigation Params
   const handleAttend = useCallback(
     item => {
@@ -37,22 +36,6 @@ export default function RsvpForm({navigation, route}) {
     },
     [navigation],
   );
-
-  const dispatch = useDispatch();
-
-  const {InfoChirpsDetails} = route.params;
-
-  useEffect(() => {
-    dispatch(
-      getEventRSVPInfoChirps(
-        eventObjectData?.id,
-        InfoChirpsDetails.id,
-        result => {
-          result && setRSVPList(result);
-        },
-      ),
-    );
-  }, [InfoChirpsDetails.id, dispatch, eventObjectData?.id]);
 
   const responseRSVP = useCallback(
     (item, option) => {
@@ -71,26 +54,11 @@ export default function RsvpForm({navigation, route}) {
         responseEventRSVPInfoChirps(requestData, (isSuccess, message) => {
           if (isSuccess) {
             ToastSuccess(message);
-            dispatch(
-              getEventRSVPInfoChirps(
-                eventObjectData?.id,
-                InfoChirpsDetails.id,
-                result => {
-                  result && setRSVPList(result);
-                },
-              ),
-            );
           }
         }),
       );
     },
-    [
-      InfoChirpsDetails.id,
-      SelectedObject.comment,
-      SelectedObject.rsvpId,
-      dispatch,
-      eventObjectData?.id,
-    ],
+    [SelectedObject.comment, SelectedObject.rsvpId, dispatch],
   );
 
   return (
@@ -109,20 +77,22 @@ export default function RsvpForm({navigation, route}) {
                 )}
 
                 <View style={styles.rsvpTitleContainer}>
-                  <Text style={styles.rsvpTitleName} numberOfLines={3}>
+                  <Text style={styles.rsvpTitleName} numberOfLines={2}>
                     {Strings.RSVP} : {item.title}
                   </Text>
-                  <Text style={styles.rsvpDate}>
-                    {Strings.rsvpDate}
-                    {new Date(item.rsvpDate).toLocaleDateString()}
-                  </Text>
+                  <View>
+                    <Text style={styles.rsvpDate}>
+                      {Strings.rsvpDate}
+                      {new Date(item.rsvpDate).toLocaleDateString()}
+                    </Text>
+                    <Text style={styles.rsvpDate}>
+                      {Strings.rsvpTime}
+                      {moment(item.rsvpDate).format(
+                        AppConstants.TimeFormats.HourMinutesSecond,
+                      )}
+                    </Text>
+                  </View>
                 </View>
-                <Text style={styles.rsvpDate}>
-                  {Strings.rsvpTime}
-                  {moment(item.rsvpDate).format(
-                    AppConstants.TimeFormats.HourMinutesSecond,
-                  )}
-                </Text>
               </View>
               <View style={styles.rsvpDetailsContainer}>
                 <Text style={styles.rsvpDescriptionData}>

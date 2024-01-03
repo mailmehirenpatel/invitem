@@ -63,8 +63,13 @@ export const styles = StyleSheet.create({
     marginBottom: verticalScale(50),
   },
   infoTabDescriptionView: {
-    height: Metrics.screenHeight * 0.1,
-    width: Metrics.screenWidth * 0.6,
+    //height: Platform.OS === 'android' ? '' : '',
+    height: 'auto',
+    //flexDirection: 'column',
+    width:
+      Platform.OS === 'android'
+        ? Metrics.screenWidth * 0.6
+        : Metrics.screenWidth * 0.6,
     backgroundColor: Colors.DarkGreen,
     alignSelf: 'center',
     alignItems: 'center',
@@ -77,7 +82,7 @@ export const styles = StyleSheet.create({
   },
   infoTabDescriptionViewText: {
     color: Colors.White,
-    fontSize: fonts.size.s12,
+    fontSize: Platform.OS === 'android' ? fonts.size.s12 : fonts.size.s10,
     textAlign: 'center',
     paddingBottom: verticalScale(20),
   },
@@ -88,5 +93,19 @@ export const styles = StyleSheet.create({
     bottom: verticalScale(1),
     right: scale(2),
     alignSelf: 'center',
+  },
+  nowAddTeamAndEventDetails: {
+    textAlign: 'center',
+    fontFamily: fonts.type.RobotoSerifBold,
+    color: Colors.logoBackgroundColor,
+    fontWeight: 'bold',
+    fontSize: fonts.size.s18,
+    position: 'relative',
+    marginTop: Platform.OS === 'android' ? 0 : -10,
+    //backgroundColor: Colors.Red,
+  },
+  createRsvpBtn: {
+    marginBottom: verticalScale(20),
+    marginHorizontal: scale(20),
   },
 });

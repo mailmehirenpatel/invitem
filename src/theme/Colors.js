@@ -79,6 +79,7 @@ export const appColors = {
   loginBottomLightText: 'rgba(40, 51, 113, 0.7)',
   BlueColor: '#0000ff',
   textInputStyleColor: '#05375a',
+  bubblesGrey: '#858585',
 };
 
 const Colors = {

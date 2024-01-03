@@ -137,7 +137,17 @@ export default StyleSheet.create({
     fontSize: fonts.size.s12,
     color: Colors.DarkGreen,
   },
-
+  createdUserView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: verticalScale(10),
+  },
+  createdUserText: {
+    fontFamily: fonts.type.RobotoSerifRegular,
+    fontWeight: fonts.weight.w700,
+    fontSize: fonts.size.s17,
+    color: Colors.DarkGreen,
+  },
   optionView: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -164,5 +174,13 @@ export default StyleSheet.create({
     tintColor: Colors.Black,
     marginRight: scale(12),
     resizeMode: 'contain',
+  },
+  listMemberContainer: {
+    backgroundColor: Colors.White,
+    width: '100%',
+    borderRadius: 5,
+    paddingHorizontal: scale(5),
+    borderColor: Colors.Gray,
+    borderWidth: 1,
   },
 });

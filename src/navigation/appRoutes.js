@@ -53,6 +53,7 @@ import EventScheduleList from '../screens/EventScheduleList';
 import UpdateEventScheduleList from '../screens/UpdateEventScheduleList';
 import AddEventSchedule from '../screens/AddEventSchedule';
 import UpcomingEvents from '../screens/EventCalendar';
+import CreateRsvp from '../screens/CreateRsvp';
 
 // Common Options for Header Shown False
 const commonOptions = {
@@ -279,6 +280,10 @@ export const dashboardScreens = {
   },
   [NavigationRoutes.AddEventSchedule]: {
     component: AddEventSchedule,
+    options: commonOptions,
+  },
+  [NavigationRoutes.CreateRsvp]: {
+    component: CreateRsvp,
     options: commonOptions,
   },
 };

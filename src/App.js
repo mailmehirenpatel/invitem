@@ -16,6 +16,7 @@ import SplashScreen from 'react-native-splash-screen';
 import Loader from './components/Loader';
 import NoInternet from './components/NoInternet';
 import {persistor, store} from './store';
+import {navigationRef} from './navigation/NavigationStack';
 
 PushNotification.configure({
   // IOS ONLY (optional): default: all - Permissions to register.
@@ -26,8 +27,12 @@ PushNotification.configure({
   },
   onNotification: function (notification) {
     const {data} = notification;
-    //console.log(data?.data?.RefId);
-    //NavigationService.navigate('Screen', {notificationData: data});
+    //console.log(data);
+    //console.log(data?.RefId);
+    navigationRef.current.navigate('EventDetail', {
+      notificationDataId: data?.RefId,
+      isFromNotification: true,
+    });
   },
   // Should the initial notification be popped automatically
   // default: true
@@ -78,7 +83,7 @@ const App = () => {
         bigPictureUrl: data?.android?.imageUrl ? data?.android?.imageUrl : '',
         smallIcon: data?.android?.imageUrl ? data?.android?.imageUrl : '',
         vibrate: true,
-        data: data,
+        data: {...data?.data},
       });
     } catch (error) {
       console.log(JSON.stringify(error));
